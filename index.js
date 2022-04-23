@@ -10,12 +10,12 @@ const port = process.env.PORT || 8000;
 setTimeout(() => {
   setTimeout(() => {
     if (process.env.ExtraErrorWebDelay > 0) {
-      logger('info', `Webserver was delayed by ${process.env.ExtraErrorWebDelay}ms beause of a error.`);
+      logger('info', `Webserver was delayed by ${process.env.ExtraErrorWebDelay || 500}ms beause of a error.`);
     }
     app.listen(port, () => {
       /* eslint-disable no-console */
       logger('system', `Server started on port ${port}`);
       /* eslint-enable no-console */
     });
-  }, process.env.ExtraErrorWebDelay);
-}, process.env.GlobalWaitTime);
+  }, process.env.ExtraErrorWebDelay || 500);
+}, process.env.GlobalWaitTime || 500);
