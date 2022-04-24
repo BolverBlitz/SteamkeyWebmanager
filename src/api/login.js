@@ -256,14 +256,14 @@ router.post("/logout", limiter, async (reg, res, next) => {
         }
         TV.check(value.token, para).then(function (Check) {
             if (Check.State) {
-                DB.webtoken.del.Webtoken(value.token).then(function (Check) {
+                DB.webtoken.delete.webtoken(value.token).then(function (Check) {
                     res.status(200);
                     res.json({
                         Message: "Sucsess"
                     });
                 })
             } else {
-                DB.webtoken.del.Webtoken(value.token).then(function (Check) {
+                DB.webtoken.delete.webtoken(value.token).then(function (Check) {
                     res.status(401);
                     res.json({
                         Message: "Token invalid"

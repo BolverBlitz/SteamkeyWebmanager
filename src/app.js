@@ -14,7 +14,7 @@ const api = require('./api');
 const app = express();
 app.set('trust proxy', 1); // If Behind PROXY
 
-// app.use(morgan('dev'));
+//app.use(morgan('dev'));
 app.use(helmet());
 app.use(cors());
 app.use(express.json());

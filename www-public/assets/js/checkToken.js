@@ -56,12 +56,12 @@ function logout() {
   const getUrl = window.location;
   const baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
   if (localStorage.getItem("token") !== null) {
-    const posting = $.post(`${baseUrl}api/mshc/mshc_login/logout`, {
+    const posting = $.post(`${baseUrl}api/application/login/logout`, {
       token: localStorage.getItem("token")
     });
     posting.done(function (result) {
       clearLocalStorrage()
-      setTimeout(function () { window.location.replace(`${baseUrl}login`); }, 150);
+      setTimeout(function () { window.location.replace(`${baseUrl}`); }, 150);
     })
     posting.fail(function (err) {
       if (err.status === 401) {
@@ -71,4 +71,10 @@ function logout() {
       }
     });
   }
+}
+
+function login() {
+  const getUrl = window.location;
+  const baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
+  window.location.replace(`${baseUrl}login`);
 }
