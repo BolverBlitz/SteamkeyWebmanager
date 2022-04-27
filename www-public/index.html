@@ -101,48 +101,15 @@
     <div id="SearchOptions"></div>
 
     <div id="Table"></div>
-    <table id="KeyTable">
-      <tr class="header">
-        <th style="width: 60%">Name</th>
-        <th style="width: 40%">Country</th>
-      </tr>
-      <tr>
-        <td>Alfreds Futterkiste</td>
-        <td>Germany</td>
-      </tr>
-      <tr>
-        <td>Berglunds snabbkop</td>
-        <td>Sweden</td>
-      </tr>
-      <tr>
-        <td>Island Trading</td>
-        <td>UK</td>
-      </tr>
-      <tr>
-        <td>Koniglich Essen</td>
-        <td>Germany</td>
-      </tr>
-      <tr>
-        <td>Laughing Bacchus Winecellars</td>
-        <td>Canada</td>
-      </tr>
-      <tr>
-        <td>Magazzini Alimentari Riuniti</td>
-        <td>Italy</td>
-      </tr>
-      <tr>
-        <td>North/South</td>
-        <td>UK</td>
-      </tr>
-      <tr>
-        <td>Paris specialites</td>
-        <td>France</td>
-      </tr>
-    </table>
 
     <script>
+      let GlobakStatus = "all";
+      const PossibleKeyStatus = ["🟢", "🟡", "🔵", "⚫️"];
+      const PossibleKeyStatusText = ["Unused", "Unknown", "Gifted", "Used"];
+
       $(document).ready(function () {
         CheckTokenValidity();
+        getTableData();
       });
 
       function search() {
@@ -168,6 +135,11 @@
         const getUrl = window.location;
         const baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
         window.location.replace(`${baseUrl}addkeys`);
+      }
+
+      function setStatus(status) {
+        GlobakStatus = status;
+        getTableData();
       }
 
       //Checks if you are logged in, if so you get "Show my Keys" and a logout button. If not, the login button will be displayed
@@ -222,6 +194,86 @@
         `);
           });
         }
+      }
+
+      function getColor(value) {
+        //value from 0 to 1
+        var hue = ((1 - value) * 120).toString(10);
+        return ["hsl(", hue, ",100%,50%)"].join("");
+      }
+
+      function getTableData() {
+        const getUrl = window.location;
+        const baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
+
+        const exportjson = {
+          status: GlobakStatus,
+          onlymykeys: $("#mykeys").is(":checked"),
+        };
+
+        const posting = $.ajax({
+          url: `${baseUrl}api/application/keys`,
+          type: "GET",
+          contentType: "application/json; charset=utf-8",
+          headers: { Authorization: "Bearer " + localStorage.getItem("token") },
+          data: exportjson,
+          success: function (keystatus) {
+            $("#Table").html(`
+                <table id="KeyTable">
+                    <tr class="header">
+                        <th style="width: 10%">Status</th>
+                        <th style="width: 50%">Name</th>
+                        <th style="width: 30%">Owner</th>
+                        <th style="width: 10%">Actions</th>
+                    </tr>
+                </table>
+                `);
+            for (let i = 0; i < keystatus.length; i++) {
+              const key =
+                Number(keystatus[i].keys_success) +
+                Number(keystatus[i].keys_failed);
+              $("#KeyTable").append(`
+                    <tr>
+                        <td title="${PossibleKeyStatusText[keystatus[i].status - 1]}" >${PossibleKeyStatus[keystatus[i].status - 1]}</td>
+                        <td>${keystatus[i].name}</td>
+                        <td style="color: ${getColor(keystatus[i].keys_success / key)} !important" title="${keystatus[i].keys_success / key}">${keystatus[i].owner}</td>
+                        <td>Buttons...</td>
+                    </tr>
+                    `);
+            }
+          },
+          error: function (err) {
+            if (err.status === 429) {
+              SnackBar({
+                message: `Error 429 - Too many requests`,
+                width: "400px",
+                speed: SnackBox_Timeout,
+                position: SnackBox_Location,
+                status: "error",
+              });
+            } else if (err.status === 500) {
+              SnackBar({
+                message: `Error 500 - Internal Server Error`,
+                width: "400px",
+                speed: SnackBox_Timeout,
+                position: SnackBox_Location,
+                status: "error",
+              });
+            } else if (
+              err.status === 401 ||
+              err.status === 400 ||
+              err.status === 403
+            ) {
+              SnackBar({
+                message: `Error ${err.status} - ${err.statusText}`,
+                width: "400px",
+                speed: SnackBox_Timeout,
+                position: SnackBox_Location,
+                status: "error",
+              });
+            }
+          },
+        });
       }
     </script>
   </body>

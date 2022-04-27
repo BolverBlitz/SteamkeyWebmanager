@@ -25,7 +25,14 @@ const tokenpermissions = () => {
             IP: IP
         }
 
-        const UserToken = reg.headers['authorization'].replace('Bearer ', '');
+        let UserToken;
+
+        if (reg.headers['authorization'] != undefined) {
+            UserToken = reg.headers['authorization'].replace('Bearer ', '');
+        } else {
+            next(new Error ('No token in request found'));
+        }
+
 
         TV.check(UserToken, para).then(function (Check) {
             if (Check.State) {

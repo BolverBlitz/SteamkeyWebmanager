@@ -40,6 +40,11 @@ const limiter = rateLimit({
     max: 30
 });
 
+const getKeysschema = Joi.object({
+    onlymykeys: Joi.boolean().required(),
+    status: Joi.string().valid('all', 'ava', 'unk', 'gif', 'use').required(),
+})
+
 const newkeysschema = customJoi.object({
     Status: customJoi.string().max(256).htmlStrip().required().max(3),
     Keys: customJoi.string().trim().required().htmlStrip(),
@@ -116,14 +121,59 @@ router.post("/", tokenpermissions(), limiter, async (reg, res, next) => {
             res.json({ error: 'Error when writing one or multiple keys to DB ' + err });
         });
     } catch (error) {
+        logger('error', 'Error at saving keys' + error)
         next(error);
     }
 });
 
 router.get("/", limiter, tokenpermissions(), async (reg, res, next) => {
-
     try {
+        const value = await getKeysschema.validateAsync(reg.query);
+        const owner = reg.check.Data.username
+
+        if (value.onlymykeys) { // If only my keys is set to true
+            if (value.status === 'all') { // If status is all and my keys is set to true
+                DB.key.read.all.keywithuserstatsowner(owner).then((KeyData) => {
+                    res.status(200);
+                    res.json(KeyData.rows);
+                }).catch((err) => {
+                    logger('error', 'Error when reading all keys from DB ' + err);
+                    res.status(500);
+                    res.json({ error: 'Error when reading all keys from DB ' + err });
+                });
+            } else {
+                DB.key.read.all.keysonstatuswithuserstatsowner(convertStatusToNumber(value.status), owner).then((KeyData) => {
+                    res.status(200);
+                    res.json(KeyData.rows);
+                }).catch((err) => {
+                    logger('error', 'Error when reading all keys from DB ' + err);
+                    res.status(500);
+                    res.json({ error: 'Error when reading all keys from DB ' + err });
+                });
+            }
+        } else { // If only my keys is set to false
+            if (value.status === 'all') { // If status is all and my keys is set to false
+                DB.key.read.all.keywithuserstats().then((KeyData) => {
+                    res.status(200);
+                    res.json(KeyData.rows);
+                }).catch((err) => {
+                    logger('error', 'Error when reading all keys from DB ' + err);
+                    res.status(500);
+                    res.json({ error: 'Error when reading all keys from DB ' + err });
+                });
+            } else {
+                DB.key.read.all.keysonstatuswithuserstats(convertStatusToNumber(value.status)).then((KeyData) => {
+                    res.status(200);
+                    res.json(KeyData.rows);
+                }).catch((err) => {
+                    logger('error', 'Error when reading all keys from DB ' + err);
+                    res.status(500);
+                    res.json({ error: 'Error when reading all keys from DB ' + err });
+                });
+            }
+        }
     } catch (error) {
+        logger('error', 'Error at getting keys' + error)
         next(error);
     }
 });
