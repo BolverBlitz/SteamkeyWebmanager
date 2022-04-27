@@ -1,132 +1,9 @@
 const i18n = new I18n({
   fallback: 'en',
   languages: {
-    de: {
-      Footer: {
-        AGB: "AGB",
-        Datenschutz: "Datenschutz",
-        Impressum: "Impressum"
-      },
-      Header: {
-        Links: {
-          Startseite: "Startseite",
-          FAQ: "FAQ",
-          Ausloggen: "Ausloggen",
-          Einloggen: "Einloggen",
-          Registrieren: "Registrieren",
-          AdminControl: "Admin Panel",
-          MSHCSettings: "MSHC-Einstellungen"
-        },
-      },
-      Pages: {
-        adminoverview: {
-          headline: "Admin Übersicht",
-          applications: "Anwendungs Übersicht",
-          overviewtext: "Es gab {{Connection}} Verbindungen in den letzten 4 Stunden. Protokol 1 wurde {{Protocol1}} mal gesendet und Protokol 2 {{Protocol2}} mal genutzt.<br>{{OSList}}<br>{{VersionList}}",
-          tables: {
-            status: {
-              status: "Status",
-              name: "Name",
-              version: "Version",
-              cpu: "CPU",
-              memory: "RAM",
-              arch: "Architektur",
-              uptime: "Laufzeit",
-              autorestart: "Automatischer Neustart",
-              actions: "Aktionen"
-            }
-          },
-          actions: {
-            restart: "Server {{ServerName}} wurde neugestartet",
-            stop: "Server {{ServerName}} wurde gestoppt",
-            reload: "Server {{ServerName}} wurde neu geladen",
-            gitpull: "Server {{ServerName}} wurde geupdated",
-          }
-        },
-      }
-    },
     en: {
-      Footer: {
-        AGB: "ToS",
-        Datenschutz: "Privacy",
-        Impressum: "Imprint"
-      },
-      Header: {
-        Links: {
-          Startseite: "Mainpage",
-          FAQ: "FAQ",
-          Ausloggen: "Logout",
-          Einloggen: "Login",
-          Registrieren: "Register",
-          AdminControl: "Admin Panel",
-          MSHCSettings: "MSHC-Settings"
-        },
-      },
-      Pages: {
-        adminoverview: {
-          headline: "Admin Overview",
-          applications: "Application Overview",
-          overviewtext: "There where {{Connection}} connections in the past 4 hours. Protocol 1 was used {{Protocol1}} times and protocol 2 was used {{Protocol2}} times.<br>{{OSList}}<br>{{VersionList}}",
-          tables: {
-            status: {
-              status: "Status",
-              name: "Name",
-              version: "Cersion",
-              cpu: "CPU",
-              memory: "RAM",
-              arch: "Architecture",
-              uptime: "Uptime",
-              autorestart: "Autorestart",
-              actions: "Actions"
-            }
-          },
-          actions: {
-            restart: "Server {{ServerName}} was restarted",
-            stop: "Server {{ServerName}} was stopped",
-            reload: "Server {{ServerName}} was reloaded",
-            gitpull: "Server {{ServerName}} was updated",
-          }
-        },
-      }
+      "Welcome": "Welcome",
     },
-    it: {
-      Footer: {
-        AGB: "Condizioni",
-        Datenschutz: "Protezione ",
-        Impressum: "Impronta"
-      },
-      Header: {
-        Links: {
-          Startseite: "Pagina principale",
-          FAQ: "FAQ",
-          Ausloggen: "Esci",
-          Einloggen: "Accesso",
-          Registrieren: "Registrati",
-          AdminControl: "Pannello Amministratore",
-          MSHCSettings: "MSHC-Impostazioni"
-        },
-      },
-      Pages: {
-        adminoverview: {
-          headline: "Panoramica dell'amministratore",
-          applications: "Panoramica dell'applicazione",
-		  overviewtext: "Ci sono state {{Connection}} connessioni nelle ultime 4 ore. Protocollo 1 è stato usato {{Protocol1}} volte e protocollo 2 è stato usato {{Protocol2}} volte.<br>{{OSList}}<br>{{VersionList}}",
-          tables: {
-            status: {
-              status: "Stato",
-              name: "Nome",
-              version: "Versione",
-              cpu: "CPU",
-              memory: "RAM",
-              arch: "Architettura",
-              uptime: "Tempo di attività",
-              autorestart: "Riavvio automatico",
-              actions: "Azioni"
-            }
-          }
-        },
-      }
-    }
   }
 });
 
@@ -194,7 +71,4 @@ function chanceLanguageEvent() {
 }
 
 //Set client language
-setLanguageKey()
-
-//Set Footer language selection to current language
-$("#countries").val(localStorage.getItem('lang'))
+setLanguageKey();

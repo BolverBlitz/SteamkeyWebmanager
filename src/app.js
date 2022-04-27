@@ -45,6 +45,10 @@ app.get('/login2fa', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'www-public', 'login2fa.html'));
 });
 
+app.get('/addkeys', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'www-public', 'addkeys.html'));
+});
+
 app.use('/assets', express.static(path.join(__dirname, '..', 'www-public', 'assets')));
 
 //Load APIs

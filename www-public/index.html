@@ -9,7 +9,7 @@
         box-sizing: border-box;
       }
 
-      #myInput {
+      #TableSearch {
         background-position: 10px 10px;
         background-repeat: no-repeat;
         width: 100%;
@@ -19,43 +19,89 @@
         margin-bottom: 12px;
       }
 
-      #myTable {
+      #KeyTable {
         border-collapse: collapse;
         width: 100%;
         border: 1px solid #ddd;
         font-size: 18px;
       }
 
-      #myTable th,
-      #myTable td {
+      #KeyTable th,
+      #KeyTable td {
         text-align: left;
         padding: 12px;
       }
 
-      #myTable tr {
+      #KeyTable tr {
         border-bottom: 1px solid #ddd;
       }
 
-      #myTable tr.header,
-      #myTable tr:hover {
+      #KeyTable tr.header,
+      #KeyTable tr:hover {
         background-color: #f1f1f1;
+      }
+
+      /* Dropdown Button */
+      .dropbtn {
+        background-color: #ddd;
+        margin-bottom: 8px;
+        color: white;
+        padding: 8px;
+        font-size: 16px;
+        border: none;
+      }
+
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #aaa7a7;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+      }
+
+      .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+      }
+
+      .dropdown-content a:hover {
+        background-color: #ddd;
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+
+      .dropdown:hover .dropbtn {
+        background-color: #aaa7a7;
       }
     </style>
   </head>
 
   <body>
     <div id="LoginText"></div>
-    <h2>My Customers</h2>
+    <h2>Steam Key List</h2>
 
     <input
       type="text"
-      id="myInput"
-      onkeyup="myFunction()"
+      id="TableSearch"
+      onkeyup="search()"
       placeholder="Search for names.."
       title="Type in a name"
     />
 
-    <table id="myTable">
+    <div id="SearchOptions"></div>
+
+    <div id="Table"></div>
+    <table id="KeyTable">
       <tr class="header">
         <th style="width: 60%">Name</th>
         <th style="width: 40%">Country</th>
@@ -99,11 +145,11 @@
         CheckTokenValidity();
       });
 
-      function myFunction() {
+      function search() {
         var input, filter, table, tr, td, i, txtValue;
-        input = document.getElementById("myInput");
+        input = document.getElementById("TableSearch");
         filter = input.value.toUpperCase();
-        table = document.getElementById("myTable");
+        table = document.getElementById("KeyTable");
         tr = table.getElementsByTagName("tr");
         for (i = 0; i < tr.length; i++) {
           td = tr[i].getElementsByTagName("td")[0];
@@ -118,23 +164,62 @@
         }
       }
 
+      function GoTo_addkeys() {
+        const getUrl = window.location;
+        const baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
+        window.location.replace(`${baseUrl}addkeys`);
+      }
+
+      //Checks if you are logged in, if so you get "Show my Keys" and a logout button. If not, the login button will be displayed
       function CheckTokenValidity() {
         const getUrl = window.location;
         const baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
         $("#LoginText").html(
           `<a style="position: absolute; right: 25px; top: 15px; cursor: pointer" onClick="login()">Login</a>`
         );
+        $("#SearchOptions").html(`
+            <div class="dropdown">
+                <button class="dropbtn" id="StatusDropdown">Status</button>
+                <div class="dropdown-content">
+                <a onclick="setStatus('all')">All</a>
+                <a onclick="setStatus('ava')">Avaible</a>
+                <a onclick="setStatus('unk')">Unknown</a>
+                <a onclick="setStatus('gif')">Gifted</a>
+                <a onclick="setStatus('use')">Used</a>
+                </div>
+            </div>
+        `);
         if (localStorage.getItem("token") !== null) {
           //Token was found, now validate it and if valid forward to main page
           const posting = $.post(`${baseUrl}api/application/login/check`, {
             token: localStorage.getItem("token"),
           });
           posting.done(function (result) {
-            localStorage.setItem("username", result.username);
-            console.log(result);
+            localStorage.setItem("username", result.TokenData.username);
             $("#LoginText").html(
-              `<a style="position: absolute; right: 25px; top: 15px; cursor: pointer" onClick="logout()">Logout</a>`
+              `<a style="position: absolute; right: 100px; top: 15px; cursor: pointer" onClick="GoTo_addkeys()">Add Keys</a>
+               <a style="position: absolute; right: 25px; top: 15px; cursor: pointer" onClick="logout()">Logout</a>`
             );
+            $("#SearchOptions").html(`
+            <div class="dropdown">
+                <button class="dropbtn" id="StatusDropdown">Status</button>
+                <div class="dropdown-content">
+                <a onclick="setStatus('all')">All</a>
+                <a onclick="setStatus('ava')">Avaible</a>
+                <a onclick="setStatus('unk')">Unknown</a>
+                <a onclick="setStatus('gif')">Gifted</a>
+                <a onclick="setStatus('use')">Used</a>
+                </div>
+            </div>
+
+            <input
+                type="checkbox"
+                style="margin-bottom: 15px; margin-right: 5px"
+                id="mykeys"
+                name="mykeys"
+                onchange="initTable()"
+            />Show only my keys
+        `);
           });
         }
       }

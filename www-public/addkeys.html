@@ -1,0 +1,543 @@
+<html>
+
+<head>
+    <title>SKW - Add Keys</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="/assets/js/snackbar.js"></script>
+    <link rel="stylesheet" href="assets/css/snackbar.css" />
+    <style>
+        html {
+            height: 100%;
+        }
+
+        body {
+            background-color: #6c6c6c;
+        }
+
+        /* Style the Table */
+        * {
+        box-sizing: border-box;
+        }
+
+        #KeyTable {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #ddd;
+            font-size: 22px;
+        }
+
+        #KeyTable th,
+        #KeyTable td {
+            text-align: left;
+            padding: 12px;
+        }
+
+        #KeyTable tr {
+            border-bottom: 1px solid #ddd;
+        }
+
+        #KeyTable tr.header,
+        #KeyTable tr:hover {
+            background-color: #464e5c;
+        }
+
+        /* Back Button */
+        .button {
+            background-color: #275EFE;
+            /* Green */
+            border: none;
+            color: white;
+            padding: 16px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #9625ff;
+            /* Green */
+            color: white;
+        }
+
+        /* Form CSS */
+        .forms {
+            width: 500px !important;
+            padding: 10px 20px !important;
+            background: #f4f7f8 !important;
+            margin: 10px auto !important;
+            padding: 20px !important;
+            background: #464e5c !important;
+            border-radius: 8px !important;
+            font-family: Georgia, "Times New Roman", Times, serif !important;
+        }
+
+        form {
+            width: 100% !important;
+        }
+
+        .forms fieldset {
+            border: none !important;
+        }
+
+        .forms legend {
+            font-size: 1.4em !important;
+            margin-bottom: 10px !important;
+        }
+
+        .forms label {
+            display: block !important;
+            margin-bottom: 8px !important;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="datetime"],
+        input[type="email"],
+        input[type="number"],
+        input[type="search"],
+        input[type="time"],
+        input[type="url"],
+        textarea,
+        select {
+            font-family: Georgia, "Times New Roman", Times, serif !important;
+            background: rgba(255, 255, 255, .1) !important;
+            border: none !important;
+            border-radius: 4px !important;
+            font-size: 16px !important;
+            margin: 0 !important;
+            outline: 0 !important;
+            padding: 7px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            -webkit-box-sizing: border-box !important;
+            -moz-box-sizing: border-box !important;
+            background-color: rgb(106, 116, 117) !important;
+            color: #ffffff !important;
+            -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset !important;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset !important;
+            margin-bottom: 30px !important;
+
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        input[type="datetime"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        input[type="search"]:focus,
+        input[type="time"]:focus,
+        input[type="url"]:focus,
+        textarea:focus,
+        select:focus {
+            background: #d2d9dd !important;
+        }
+
+        .forms textarea {
+            max-width: 100% !important;
+        }
+
+        .forms select {
+            -webkit-appearance: menulist-button !important;
+            height: 35px !important;
+        }
+
+        .forms .number {
+            background: #275EFE !important;
+            color: #fff !important;
+            height: 30px !important;
+            width: 30px !important;
+            display: inline-block !important;
+            font-size: 0.8em !important;
+            margin-right: 4px !important;
+            line-height: 30px !important;
+            text-align: center !important;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+            border-radius: 15px 15px 15px 0px !important;
+        }
+
+        .forms input[type="submit"],
+        .forms input[type="button"] {
+            position: relative !important;
+            display: block !important;
+            padding: 19px 39px 18px 39px !important;
+            color: #FFF !important;
+            margin: 0 auto !important;
+            background: #275EFE !important;
+            font-size: 18px !important;
+            text-align: center !important;
+            font-style: normal !important;
+            width: 100% !important;
+            border: 1px solid #275EFE !important;
+            border-width: 1px 1px 3px !important;
+            margin-bottom: 10px !important;
+        }
+
+        .forms input[type="submit"]:hover,
+        .forms input[type="button"]:hover {
+            background: #275EFE !important;
+        }
+
+        @supports (-webkit-appearance: none) or (-moz-appearance: none) {
+
+            input[type=checkbox],
+            input[type=radio] {
+                --active: #275EFE !important;
+                --active-inner: #fff !important;
+                --focus: 2px rgba(39, 94, 254, .3) !important;
+                --border: #BBC1E1 !important;
+                --border-hover: #275EFE !important;
+                --background: #fff !important;
+                --disabled: #F6F8FF !important;
+                --disabled-inner: #E1E6F9 !important;
+                -webkit-appearance: none !important;
+                -moz-appearance: none !important;
+                height: 21px !important;
+                outline: none !important;
+                display: inline-block !important;
+                vertical-align: top !important;
+                position: relative !important;
+                margin: 0 !important;
+                cursor: pointer !important;
+                border: 1px solid var(--bc, var(--border)) !important;
+                background: var(--b, var(--background)) !important;
+                transition: background 0.3s, border-color 0.3s, box-shadow 0.2s !important;
+            }
+
+            input[type=checkbox]:after,
+            input[type=radio]:after {
+                content: "" !important;
+                display: block !important;
+                left: 0 !important;
+                top: 0 !important;
+                position: absolute !important;
+                transition: transform var(--d-t, 0.3s) var(--d-t-e, ease), opacity var(--d-o, 0.2s) !important;
+            }
+
+            input[type=checkbox]:checked,
+            input[type=radio]:checked {
+                --b: var(--active) !important;
+                --bc: var(--active) !important;
+                --d-o: .3s !important;
+                --d-t: .6s !important;
+                --d-t-e: cubic-bezier(.2, .85, .32, 1.2) !important;
+            }
+
+            input[type=checkbox]:focus,
+            input[type=radio]:focus {
+                box-shadow: 0 0 0 var(--focus) !important;
+            }
+
+            input[type=checkbox]:not(.switch),
+            input[type=radio]:not(.switch) {
+                width: 21px !important;
+            }
+
+            input[type=checkbox]:not(.switch):after,
+            input[type=radio]:not(.switch):after {
+                opacity: var(--o, 0) !important;
+            }
+
+            input[type=checkbox]:not(.switch):checked,
+            input[type=radio]:not(.switch):checked {
+                --o: 1 !important;
+            }
+
+            input[type=checkbox]+label,
+            input[type=radio]+label {
+                font-size: 14px !important;
+                line-height: 21px !important;
+                display: inline-block !important;
+                vertical-align: top !important;
+                cursor: pointer !important;
+                margin-left: 4px !important;
+            }
+
+            input[type=checkbox]:not(.switch) {
+                border-radius: 7px !important;
+            }
+
+            input[type=checkbox]:not(.switch):after {
+                width: 5px !important;
+                height: 9px !important;
+                border: 2px solid var(--active-inner) !important;
+                border-top: 0 !important;
+                border-left: 0 !important;
+                left: 7px !important;
+                top: 2px !important;
+                transform: rotate(var(--r, 20deg)) !important;
+            }
+
+            input[type=checkbox]:not(.switch):checked {
+                --r: 43deg !important;
+            }
+
+            input[type=checkbox].switch {
+                width: 38px !important;
+                border-radius: 11px !important;
+            }
+
+            input[type=checkbox].switch:after {
+                left: 2px !important;
+                top: 2px !important;
+                border-radius: 50% !important;
+                width: 15px !important;
+                height: 15px !important;
+                background: var(--ab, var(--border)) !important;
+                transform: translateX(var(--x, 0)) !important;
+            }
+
+            input[type=checkbox].switch:checked {
+                --ab: var(--active-inner) !important;
+                --x: 17px !important;
+            }
+
+            input[type=checkbox].switch:disabled:not(:checked):after {
+                opacity: 0.6 !important;
+            }
+
+            input[type=radio] {
+                border-radius: 50% !important;
+            }
+
+            input[type=radio]:after {
+                width: 19px !important;
+                height: 19px !important;
+                border-radius: 50% !important;
+                background: var(--active-inner) !important;
+                opacity: 0 !important;
+                transform: scale(var(--s, 0.7)) !important;
+            }
+
+            input[type=radio]:checked {
+                --s: .5 !important;
+            }
+        }
+
+        .forms ul {
+            margin: 12px !important;
+            padding: 0 !important;
+            list-style: none !important;
+            width: 100% !important;
+            max-width: 320px !important;
+        }
+
+        .forms ul li {
+            margin: 16px 0 !important;
+            position: relative !important;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="BackButton" class="button button" onclick="location.href = '/';">
+        <-- Back</button>
+            <div class="forms">
+                <form id="AddKeys">
+                    <legend><span class="number">1</span>Add new Keys</legend>
+                    <label id="OwnerDiscription" for="Status">Username:</label>
+                    <input type="text" id="owner" placeholder=''>
+                    <label id="StatusDiscription" for="Status">Status:</label>
+                    <select id="StatusSelect" onchange="GeneratePreviewTable()" name="Status">
+                        <optgroup label="Status List">
+                        <option value="ava">Avaible</option>
+                        <option value="unk">Unknown</option>
+                </select>   
+                    <label id="KeysDataDiscription" for="Status">Keys and game/software names:</label>
+                    <textarea onkeypress="GeneratePreviewTable()" onchange="GeneratePreviewTable()" style="height: 140px;" id="keysdata" placeholder=''></textarea>
+                    <input id="SubmitButton" type="submit" value="Apply" />
+                </form>
+                <div id="result"></div>
+                <div id="output"></div>
+            </div>
+            <div id="TableContainer"></div>
+</body>
+</div>
+
+</html>
+<script src="/assets/js/checkToken.js"></script>
+<script>
+    let ButtonDisabled = true;
+    CheckTokenValidity();
+
+    const SnackBox_Timeout = 400;
+    const SnackBox_Location = "tr";
+
+    const getUrl = window.location;
+    const baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
+
+    $('#owner').val(localStorage.getItem('username'));
+
+    function GeneratePreviewTable() {
+        const KeyData = $('#keysdata').val();
+        const KeyDataArray = KeyData.split('\n');
+
+        const TableHeadData = ["Status", "Name", "Key", "Owner"];
+        const TableData = []
+
+        for(i = 0; i < KeyDataArray.length; i++){
+            const KeyString = KeyDataArray[i].split(':');
+            const SteamKey = KeyString[KeyString.length - 1];
+            const KeyName = [];
+
+            if(SteamKey.match(/[A-z0-9]{5}(?:(?:-[A-z0-9]{5}){4}|(?:-[A-z0-9]{5}){2})/gi)){
+                for(j = 0; j < KeyString.length - 1; j++){
+                    KeyName.push(KeyString[j]);
+                }
+
+                TableData.push({
+                    "Status": StatusToEmote($('#StatusSelect').val()),
+                    "Name": KeyName.join(":").trim(),
+                    "Key": SteamKey.trim(),
+                    "Owner": $('#owner').val()
+                });
+            }
+        }
+
+        $('#TableContainer').html(CreateTable({
+            "TableHeadData": TableHeadData,
+            "TableData": TableData
+        }));
+
+        //Enable Button
+        ButtonDisabled = false;
+
+        //Send message to check data
+        SnackBar({
+            message: `Please check if the data is correct.`,
+            width: "400px",
+            speed: SnackBox_Timeout,
+            position: SnackBox_Location,
+            status: "success",
+        });
+    }
+
+    $("#AddKeys").submit(function (event) {
+        event.preventDefault();
+
+        if(ButtonDisabled){
+            SnackBar({
+                message: `Please check your input first.`,
+                width: "400px",
+                speed: SnackBox_Timeout,
+                position: SnackBox_Location,
+                status: "error",
+                    });
+            return;
+        }
+        
+        const exportjson = JSON.stringify({
+            Status: $('#StatusSelect').val(),
+            Keys: $('#keysdata').val(),
+            Owner: $('#owner').val()
+        })
+
+        const posting = $.ajax({
+            url: `${baseUrl}api/application/keys`,
+            type: 'POST',
+            contentType: "application/json; charset=utf-8",
+            headers: { "Authorization": 'Bearer ' + localStorage.getItem('token') },
+            data: exportjson,
+            success: function (keystatus) {
+                scrollTo()
+                SnackBar({
+                    message: `Added ${keystatus.KeyAdded.length} keys.`,
+                    width: "400px",
+                    speed: SnackBox_Timeout,
+                    position: SnackBox_Location,
+                    status: "success",
+                });
+                if(keystatus.KeyRejected.length > 0){
+                    SnackBar({
+                        message: `Rejected ${keystatus.KeyRejected.length} keys.`,
+                        width: "400px",
+                        speed: SnackBox_Timeout,
+                        position: SnackBox_Location,
+                        status: "error",
+                    });
+                }
+            },
+            error: function (err) {
+                if (err.status === 429) {
+                    SnackBar({
+                        message: `Error 429 - Too many requests`,
+                        width: "400px",
+                        speed: SnackBox_Timeout,
+                        position: SnackBox_Location,
+                        status: "error",
+                    });
+                } else if (err.status === 500) {
+                    SnackBar({
+                        message: `Error 500 - Internal Server Error`,
+                        width: "400px",
+                        speed: SnackBox_Timeout,
+                        position: SnackBox_Location,
+                        status: "error",
+                    });
+                } else if (err.status === 401 || err.status === 400 || err.status === 403) {
+                    SnackBar({
+                        message: `Error ${err.status} - ${err.statusText}`,
+                        width: "400px",
+                        speed: SnackBox_Timeout,
+                        position: SnackBox_Location,
+                        status: "error",
+                    });
+                }
+            }
+        });
+    });
+
+    /**
+     * @param {string} status
+     * @returns {string} Emote
+     */
+    function StatusToEmote(status) {
+        switch (status) {
+            case "ava":
+                return "🟢";
+            case "unk":
+                return "🟡";
+            default:
+                return "⚫️";
+        }
+    }
+
+    /**
+     * Cheates a table from an array with a header.
+     * @param {Array} data - The data to be cheatsheeted.
+     * @param {Array} header - The header of the table.
+     * @param {String} id - The id of the table.
+     */
+     function CreateTable({ TableHeadData, TableData }) {
+        let TableElements = [];
+            TableHeadData.map(part => {
+                TableElements.push(`<th>${part}</th>`)
+            });
+            let TableHead = `<thead><tr>${TableElements.join("")}</tr></thead>`;
+            let TableString = `<div class="table-wrapper"><table id="KeyTable">${TableHead}`;
+            let TableEnd = `</table></div>`;
+
+            let TableBody = [];
+            let TableBodyDataPart = [];
+            TableData.map(Data => {
+                for (const [key, value] of Object.entries(Data)) {
+                    if (TableHeadData.includes(key)) {
+                        let index = TableHeadData.indexOf(key);
+                        TableBodyDataPart[index] = `<td>${value}</td>`;
+                    }
+                }
+                TableBody.push(`<tbody><tr>${TableBodyDataPart.join("")}</tr></tbody>`);
+                TableBodyDataPart = [];
+            });
+
+            return `${TableString}${TableBody.join("")}${TableEnd}`
+        }
+</script>
+
+<!-- Credits: -->
+<!-- https://codepen.io/Thecoderboy/pen/mdrzGEz -->
