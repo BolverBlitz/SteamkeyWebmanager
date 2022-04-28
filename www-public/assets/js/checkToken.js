@@ -8,7 +8,7 @@ function CheckTokenValidity() {
     const baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
     if (localStorage.getItem("token") !== null) {
       //Token was found, now validate it and if valid forward to /public
-      const posting = $.post(`${baseUrl}api/application/check`, {
+      const posting = $.post(`${baseUrl}api/application/login/check`, {
         token: localStorage.getItem("token")
       });
       posting.done(function (result) {
