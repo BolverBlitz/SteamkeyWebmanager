@@ -126,10 +126,13 @@ router.post("/", tokenpermissions(), limiter, async (reg, res, next) => {
     }
 });
 
-router.get("/", limiter, tokenpermissions(), async (reg, res, next) => {
+router.get("/", limiter, tokenpermissions(true), async (reg, res, next) => {
     try {
         const value = await getKeysschema.validateAsync(reg.query);
-        const owner = reg.check.Data.username
+        let owner;
+        if(reg.check){
+            owner = reg.check.Data.username
+        }
 
         if (value.onlymykeys) { // If only my keys is set to true
             if (value.status === 'all') { // If status is all and my keys is set to true

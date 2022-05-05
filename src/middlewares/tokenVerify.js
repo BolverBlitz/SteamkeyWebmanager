@@ -6,9 +6,10 @@ const useragent = require('express-useragent');
 /**
  * Checks if token is valid and provides the permissions as object.
  * When token is not valid, it will stop the request.
+ * @param {boolean} [skip] If true, it will skip the token check.
  * @returns {object}
  */
-const tokenpermissions = () => {
+const tokenpermissions = (skip = false) => {
     return (reg, res, next) => {
         let IP;
         const source = reg.headers['user-agent']
@@ -53,9 +54,11 @@ const tokenpermissions = () => {
 
                     reg.permissions = PermissionsObject;
                     reg.check = Check
-                    next();
+                    return next();
                 });
             } else {
+                if(skip) { return next(); }
+                
                 res.status(401);
                 res.json({
                     Message: 'Token Invalid'
