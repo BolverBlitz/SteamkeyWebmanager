@@ -198,7 +198,7 @@
 
       function getColor(value) {
         //value from 0 to 1
-        var hue = ((1 - value) * 120).toString(10);
+        var hue = ((value) * 120).toString(10);
         return ["hsl(", hue, ",100%,50%)"].join("");
       }
 
@@ -223,7 +223,7 @@
                     <tr class="header">
                         <th style="width: 10%">Status</th>
                         <th style="width: 50%">Name</th>
-                        <th style="width: 30%">Owner</th>
+                        <th style="width: 30%">Owner & Rating</th>
                         <th style="width: 10%">Actions</th>
                     </tr>
                 </table>
@@ -236,7 +236,7 @@
                     <tr>
                         <td title="${PossibleKeyStatusText[keystatus[i].status - 1]}" >${PossibleKeyStatus[keystatus[i].status - 1]}</td>
                         <td>${keystatus[i].name}</td>
-                        <td style="color: ${getColor(keystatus[i].keys_success / key)} !important" title="${keystatus[i].keys_success / key}">${keystatus[i].owner}</td>
+                        <td style="color: ${getColor(keystatus[i].keys_success / key)} !important" title="${keystatus[i].keys_success / key}">${keystatus[i].owner} (${(keystatus[i].keys_success / key)*100}%)</td>
                         <td>Buttons...</td>
                     </tr>
                     `);
