@@ -4,6 +4,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/checkToken.js"></script>
+    <script src="/assets/js/snackbar.js"></script>
+    <link rel="stylesheet" href="assets/css/snackbar.css" />
     <style>
       * {
         box-sizing: border-box;
@@ -106,6 +108,8 @@
       let GlobakStatus = "all";
       const PossibleKeyStatus = ["🟢", "🟡", "🔵", "⚫️"];
       const PossibleKeyStatusText = ["Unused", "Unknown", "Gifted", "Used"];
+      const SnackBox_Timeout = 400;
+      const SnackBox_Location = "tr";
 
       $(document).ready(function () {
         CheckTokenValidity();
@@ -196,10 +200,77 @@
         }
       }
 
+      /**
+       * Return a color from red to green. 100% = Green, 0% = Red
+       */
       function getColor(value) {
         //value from 0 to 1
-        var hue = ((value) * 120).toString(10);
+        var hue = (value * 120).toString(10);
         return ["hsl(", hue, ",100%,50%)"].join("");
+      }
+
+      /**
+       * Get buttons based on login status for a key
+       */
+      function getButtons(KeyID) {
+        if (localStorage.getItem("token") === null) {
+          return `<a style="position: center; cursor: pointer" onClick="GoTo_infokey('${KeyID}')">ℹ️</a>`;
+        } else {
+          return `<a style="position: center; cursor: pointer" onClick="GoTo_infokey('${KeyID}')">ℹ️</a> <a style="cursor: pointer" onClick="GoTo_giftkey('${KeyID}')">🎁</a>`;
+        }
+      }
+
+      function GoTo_infokey(KeyID) {
+        const getUrl = window.location;
+        const baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
+
+        const posting = $.ajax({
+          url: `${baseUrl}api/application/keys/keysave`,
+          type: "GET",
+          contentType: "application/json; charset=utf-8",
+          data: {KeyID: KeyID},
+          success: function (keystatus) {
+            const options = { hour: '2-digit', minute: '2-digit', year: 'numeric', month: 'numeric', day: 'numeric' };
+            SnackBar({
+              message: `Name: ${keystatus.name}<br>Owner: ${keystatus.owner}<br>Eingereicht am ${new Date(keystatus.created_at).toLocaleDateString('de-DE', options)}<br>Status: ${PossibleKeyStatusText[keystatus.status - 1]} seit ${new Date(keystatus.status_modifyed).toLocaleDateString('de-DE', options)}`,
+              with: "400px",
+              speed: SnackBox_Timeout+4,
+              position: SnackBox_Location,
+              status: "success",
+            })
+          },
+          error: function (err) {
+            if (err.status === 429) {
+              SnackBar({
+                message: `Error 429 - Too many requests`,
+                width: "400px",
+                speed: SnackBox_Timeout,
+                position: SnackBox_Location,
+                status: "error",
+              });
+            } else if (err.status === 500) {
+              SnackBar({
+                message: `Error 500 - Internal Server Error`,
+                width: "400px",
+                speed: SnackBox_Timeout,
+                position: SnackBox_Location,
+                status: "error",
+              });
+            } else if (
+              err.status === 401 ||
+              err.status === 400 ||
+              err.status === 403
+            ) {
+              SnackBar({
+                message: `Error ${err.status} - ${err.statusText}`,
+                width: "400px",
+                speed: SnackBox_Timeout,
+                position: SnackBox_Location,
+                status: "error",
+              });
+            }
+          }
+        });
       }
 
       function getTableData() {
@@ -236,8 +307,8 @@
                     <tr>
                         <td title="${PossibleKeyStatusText[keystatus[i].status - 1]}" >${PossibleKeyStatus[keystatus[i].status - 1]}</td>
                         <td>${keystatus[i].name}</td>
-                        <td style="color: ${getColor(keystatus[i].keys_success / key)} !important" title="${keystatus[i].keys_success / key}">${keystatus[i].owner} (${(keystatus[i].keys_success / key)*100}%)</td>
-                        <td>Buttons...</td>
+                        <td style="color: ${getColor(keystatus[i].keys_success / key)} !important" title="${keystatus[i].keys_success / key}">${keystatus[i].owner} (${(keystatus[i].keys_success / key) * 100}%)</td>
+                        <td>${getButtons(keystatus[i].id)}</td>
                     </tr>
                     `);
             }

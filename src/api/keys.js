@@ -45,6 +45,10 @@ const getKeysschema = Joi.object({
     status: Joi.string().valid('all', 'ava', 'unk', 'gif', 'use').required(),
 })
 
+const getKeyData = Joi.object({
+    KeyID: customJoi.string().trim().required().htmlStrip()
+})
+
 const newkeysschema = customJoi.object({
     Status: customJoi.string().max(256).htmlStrip().required().max(3),
     Keys: customJoi.string().trim().required().htmlStrip(),
@@ -130,7 +134,7 @@ router.get("/", limiter, tokenpermissions(true), async (reg, res, next) => {
     try {
         const value = await getKeysschema.validateAsync(reg.query);
         let owner;
-        if(reg.check){
+        if (reg.check) {
             owner = reg.check.Data.username
         }
 
@@ -176,7 +180,21 @@ router.get("/", limiter, tokenpermissions(true), async (reg, res, next) => {
             }
         }
     } catch (error) {
-        logger('error', 'Error at getting keys' + error)
+        logger('error', 'Error at getting keys' + error);
+        next(error);
+    }
+});
+
+router.get("/keysave", limiter, async (reg, res, next) => {
+    try {
+        const value = await getKeyData.validateAsync(reg.query)
+
+        DB.key.read.keysave(value.KeyID).then((KeyDataSave) => {
+            res.status(200);
+            res.json(KeyDataSave.rows[0])
+        })
+    } catch (error) {
+        logger('error', 'Error at getting a key' + error);
         next(error);
     }
 });
