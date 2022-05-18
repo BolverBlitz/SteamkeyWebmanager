@@ -212,11 +212,11 @@
       /**
        * Get buttons based on login status for a key
        */
-      function getButtons(KeyID) {
-        if (localStorage.getItem("token") === null) {
-          return `<a style="position: center; cursor: pointer" onClick="GoTo_infokey('${KeyID}')">ℹ️</a>`;
+      function getButtons(KeyID, Status) {
+        if (localStorage.getItem("token") === null || Status === 4) {
+          return `<a title="Key Info" style="position: center; cursor: pointer" onClick="GoTo_infokey('${KeyID}')">ℹ️</a>`;
         } else {
-          return `<a style="position: center; cursor: pointer" onClick="GoTo_infokey('${KeyID}')">ℹ️</a> <a style="cursor: pointer" onClick="GoTo_giftkey('${KeyID}')">🎁</a>`;
+          return `<a title="Key Info" style="position: center; cursor: pointer" onClick="GoTo_infokey('${KeyID}')">ℹ️</a> <a title="Create Gift Link" style="cursor: pointer" onClick="GoTo_giftkey('${KeyID}')">🎁</a>`;
         }
       }
 
@@ -232,7 +232,7 @@
           success: function (keystatus) {
             const options = { hour: '2-digit', minute: '2-digit', year: 'numeric', month: 'numeric', day: 'numeric' };
             SnackBar({
-              message: `Name: ${keystatus.name}<br>Owner: ${keystatus.owner}<br>Eingereicht am ${new Date(keystatus.created_at).toLocaleDateString('de-DE', options)}<br>Status: ${PossibleKeyStatusText[keystatus.status - 1]} seit ${new Date(keystatus.status_modifyed).toLocaleDateString('de-DE', options)}`,
+              message: `Name: ${keystatus.name}<br>Owner: ${keystatus.owner}<br>Added at ${new Date(keystatus.created_at).toLocaleDateString('de-DE', options)}<br>Status: ${PossibleKeyStatusText[keystatus.status - 1]} seit ${new Date(keystatus.status_modifyed).toLocaleDateString('de-DE', options)}`,
               with: "400px",
               speed: SnackBox_Timeout+4,
               position: SnackBox_Location,
@@ -308,7 +308,7 @@
                         <td title="${PossibleKeyStatusText[keystatus[i].status - 1]}" >${PossibleKeyStatus[keystatus[i].status - 1]}</td>
                         <td>${keystatus[i].name}</td>
                         <td style="color: ${getColor(keystatus[i].keys_success / key)} !important" title="${keystatus[i].keys_success / key}">${keystatus[i].owner} (${(keystatus[i].keys_success / key) * 100}%)</td>
-                        <td>${getButtons(keystatus[i].id)}</td>
+                        <td>${getButtons(keystatus[i].id, keystatus[i].status)}</td>
                     </tr>
                     `);
             }
