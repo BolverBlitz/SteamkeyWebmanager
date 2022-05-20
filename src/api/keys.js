@@ -12,7 +12,7 @@ const PluginConfig = {
 };
 
 /* Plugin info */
-const PluginName = 'Users';
+const PluginName = 'Keys';
 const PluginRequirements = [];
 const PluginVersion = '0.0.1';
 const PluginAuthor = 'BolverBlitz';
