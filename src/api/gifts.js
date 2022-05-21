@@ -44,9 +44,21 @@ const createGift = Joi.object({
 })
 const router = express.Router();
 
-router.post("/", tokenpermissions(), limiter, async (reg, res, next) => {
+router.post("/create", tokenpermissions(), limiter, async (reg, res, next) => {
     try {
-        const value = await createGift.validateAsync(reg.body); 
+        const value = await createGift.validateAsync(reg.body);
+
+        DB.key.read.keysave(value.KeyID).then((KeyData) => {
+            console.log(KeyData.rows[0].owner, reg.check.Data.username);
+            
+            if(KeyData.rows[0].owner !== reg.check.Data.username) {
+                res.status(401);
+                res.json({
+                    Message: 'You are not the owner of this key.'
+                });
+            }
+            
+        });
         
     } catch (error) {
         logger('error', 'Error at saving gift' + error)
