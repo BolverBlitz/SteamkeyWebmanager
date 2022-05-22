@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>SKW - Add Keys</title>
+    <title>Claim your key</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <script src="assets/js/jquery.min.js"></script>
@@ -74,7 +74,6 @@
             padding: 20px !important;
             background: #464e5c !important;
             border-radius: 8px !important;
-            font-family: Georgia, "Times New Roman", Times, serif !important;
         }
 
         form {
@@ -105,7 +104,6 @@
         input[type="url"],
         textarea,
         select {
-            font-family: Georgia, "Times New Roman", Times, serif !important;
             background: rgba(255, 255, 255, .1) !important;
             border: none !important;
             border-radius: 4px !important;
@@ -335,27 +333,22 @@
 </head>
 
 <body>
-    <button id="BackButton" class="button button" onclick="location.href = '/';">
-        <-- Back</button>
-            <div class="forms">
-                <form id="AddKeys">
-                    <legend><span class="number">1</span>Add new Keys</legend>
-                    <label id="OwnerDiscription" for="Status">Username:</label>
-                    <input type="text" id="owner" placeholder=''>
-                    <label id="StatusDiscription" for="Status">Status:</label>
-                    <select id="StatusSelect" onchange="GeneratePreviewTable()" name="Status">
-                        <optgroup label="Status List">
-                        <option value="ava">Avaible</option>
-                        <option value="unk">Unknown</option>
-                </select>   
-                    <label id="KeysDataDiscription" for="Status">Keys and game/software names:</label>
-                    <textarea onkeypress="GeneratePreviewTable()" onchange="GeneratePreviewTable()" style="height: 140px;" id="keysdata" placeholder=''></textarea>
-                    <input id="SubmitButton" type="submit" value="Apply" />
-                </form>
-                <div id="result"></div>
-                <div id="output"></div>
-            </div>
-            <div id="TableContainer"></div>
+    <br><br><br>
+    <div class="forms">
+            <form id="GetKey">
+            <label id="OwnerDiscription" for="Status">Game title:</label>
+            <input type="text" id="game_name" disabled placeholder=''>
+            <label id="StatusDiscription" for="Status">Game from:</label>
+            <input type="text" id="game_owner_and_created_time" disabled placeholder=''> 
+            <label id="StatusDiscription" for="Status">Gifted at:</label>
+            <input type="text" id="game_gifted_at" disabled placeholder=''> 
+            <label id="StatusDiscription" for="Status">Your name (Should be a name the key owner knows):</label>
+            <input type="text" id="username" placeholder='Write here...'> 
+            <input id="SubmitButton" type="submit" value="Get your game!" />
+        </form>
+        <div id="result"></div>
+        <div id="output"></div>
+    </div>
 </body>
 </div>
 
@@ -365,7 +358,7 @@
     let ButtonDisabled = true;
     $(document).ready(function () {
         CheckTokenValidity(true);
-    })
+    });
 
     const SnackBox_Timeout = 400;
     const SnackBox_Location = "tr";
@@ -373,96 +366,35 @@
     const getUrl = window.location;
     const baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
 
-    $('#owner').val(localStorage.getItem('username'));
-
-    function GeneratePreviewTable() {
-        const KeyData = $('#keysdata').val();
-        const KeyDataArray = KeyData.split('\n');
-
-        const TableHeadData = ["Status", "Name", "Key", "Owner"];
-        const TableData = []
-
-        for(i = 0; i < KeyDataArray.length; i++){
-            const KeyString = KeyDataArray[i].split(':');
-            const SteamKey = KeyString[KeyString.length - 1];
-            const KeyName = [];
-
-            if(SteamKey.match(/[A-z0-9]{5}(?:(?:-[A-z0-9]{5}){4}|(?:-[A-z0-9]{5}){2})/gi)){
-                for(j = 0; j < KeyString.length - 1; j++){
-                    KeyName.push(KeyString[j]);
-                }
-
-                TableData.push({
-                    "Status": StatusToEmote($('#StatusSelect').val()),
-                    "Name": KeyName.join(":").trim(),
-                    "Key": SteamKey.trim(),
-                    "Owner": $('#owner').val()
-                });
+    //Get URL Query Parameters
+    //http://stackoverflow.com/a/3855394/250294
+    const qs = (function(a) {
+        if (a == "") return {};
+        var b = {};
+        for (var i = 0; i < a.length; ++i)
+            {
+            var p=a[i].split('=', 2);
+            if (p.length == 1)
+                b[p[0]] = "";
+            else
+                b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
             }
-        }
+        return b;
+    })(window.location.search.substr(1).split('&'));
 
-        $('#TableContainer').html(CreateTable({
-            "TableHeadData": TableHeadData,
-            "TableData": TableData
-        }));
+    $('#username').val(localStorage.getItem('username')); //Pre-fill username if available
 
-        //Enable Button
-        ButtonDisabled = false;
-
-        //Send message to check data
-        SnackBar({
-            message: `Please check if the data is correct.`,
-            width: "400px",
-            speed: SnackBox_Timeout,
-            position: SnackBox_Location,
-            status: "success",
-        });
-    }
-
-    $("#AddKeys").submit(function (event) {
-        event.preventDefault();
-
-        if(ButtonDisabled){
-            SnackBar({
-                message: `Please check your input first.`,
-                width: "400px",
-                speed: SnackBox_Timeout,
-                position: SnackBox_Location,
-                status: "error",
-                    });
-            return;
-        }
-        
-        const exportjson = JSON.stringify({
-            Status: $('#StatusSelect').val(),
-            Keys: $('#keysdata').val(),
-            Owner: $('#owner').val()
-        })
-
-        const posting = $.ajax({
-            url: `${baseUrl}api/application/keys`,
-            type: 'POST',
+    const posting = $.ajax({
+            url: `${baseUrl}api/application/gifts/claim`,
+            type: 'GET',
             contentType: "application/json; charset=utf-8",
             headers: { "Authorization": 'Bearer ' + localStorage.getItem('token') },
-            data: exportjson,
-            success: function (keystatus) {
-                scrollTo()
-                SnackBar({
-                    message: `Added ${keystatus.KeyAdded.length} keys.`,
-                    width: "400px",
-                    speed: SnackBox_Timeout,
-                    position: SnackBox_Location,
-                    status: "success",
-                });
-                if(keystatus.KeyRejected.length > 0){
-                    SnackBar({
-                        message: `Rejected ${keystatus.KeyRejected.length} keys.`,
-                        width: "400px",
-                        speed: SnackBox_Timeout,
-                        position: SnackBox_Location,
-                        status: "error",
-                    });
-                }
+            data: {URL_Token: qs.URL_Token},
+            success: function (GiftData) {
+                const options = { hour: '2-digit', minute: '2-digit', year: 'numeric', month: 'numeric', day: 'numeric' };
+                $('#game_name').val(GiftData.name);
+                $('#game_owner_and_created_time').val(`${GiftData.owner} at ${new Date(GiftData.created_at).toLocaleDateString('de-DE', options)}`);
+                $('#game_gifted_at').val(`${new Date(GiftData.status_modifyed).toLocaleDateString('de-DE', options)}`);
             },
             error: function (err) {
                 if (err.status === 429) {
@@ -492,53 +424,48 @@
                 }
             }
         });
-    });
 
-    /**
-     * @param {string} status
-     * @returns {string} Emote
-     */
-    function StatusToEmote(status) {
-        switch (status) {
-            case "ava":
-                return "🟢";
-            case "unk":
-                return "🟡";
-            default:
-                return "⚫️";
-        }
-    }
+        $("#GetKey").submit(function (event) {
+        event.preventDefault();
 
-    /**
-     * Cheates a table from an array with a header.
-     * @param {Array} data - The data to be cheatsheeted.
-     * @param {Array} header - The header of the table.
-     * @param {String} id - The id of the table.
-     */
-     function CreateTable({ TableHeadData, TableData }) {
-        let TableElements = [];
-            TableHeadData.map(part => {
-                TableElements.push(`<th>${part}</th>`)
-            });
-            let TableHead = `<thead><tr>${TableElements.join("")}</tr></thead>`;
-            let TableString = `<div class="table-wrapper"><table id="KeyTable">${TableHead}`;
-            let TableEnd = `</table></div>`;
-
-            let TableBody = [];
-            let TableBodyDataPart = [];
-            TableData.map(Data => {
-                for (const [key, value] of Object.entries(Data)) {
-                    if (TableHeadData.includes(key)) {
-                        let index = TableHeadData.indexOf(key);
-                        TableBodyDataPart[index] = `<td>${value}</td>`;
+            const posting = $.ajax({
+                url: `${baseUrl}api/application/gifts/claimkey`,
+                type: 'GET',
+                contentType: "application/json; charset=utf-8",
+                headers: { "Authorization": 'Bearer ' + localStorage.getItem('token') },
+                data: {URL_Token: qs.URL_Token},
+                success: function (GiftData) {
+                    console.log(GiftData);
+                },
+                error: function (err) {
+                    if (err.status === 429) {
+                        SnackBar({
+                            message: `Error 429 - Too many requests`,
+                            width: "400px",
+                            speed: SnackBox_Timeout,
+                            position: SnackBox_Location,
+                            status: "error",
+                        });
+                    } else if (err.status === 500) {
+                        SnackBar({
+                            message: `Error 500 - Internal Server Error`,
+                            width: "400px",
+                            speed: SnackBox_Timeout,
+                            position: SnackBox_Location,
+                            status: "error",
+                        });
+                    } else if (err.status === 401 || err.status === 400 || err.status === 403) {
+                        SnackBar({
+                            message: `Error ${err.status} - ${err.statusText}`,
+                            width: "400px",
+                            speed: SnackBox_Timeout,
+                            position: SnackBox_Location,
+                            status: "error",
+                        });
                     }
                 }
-                TableBody.push(`<tbody><tr>${TableBodyDataPart.join("")}</tr></tbody>`);
-                TableBodyDataPart = [];
             });
-
-            return `${TableString}${TableBody.join("")}${TableEnd}`
-        }
+        });
 </script>
 
 <!-- Credits: -->

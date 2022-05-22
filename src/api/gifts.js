@@ -42,6 +42,11 @@ const limiter = rateLimit({
 const createGift = Joi.object({
     KeyID: customJoi.string().trim().required().htmlStrip()
 })
+
+const claimKey = Joi.object({
+    URL_Token: customJoi.string().trim().required().htmlStrip()
+})
+
 const router = express.Router();
 
 router.post("/create", tokenpermissions(), limiter, async (reg, res, next) => {
@@ -113,6 +118,35 @@ router.post("/create", tokenpermissions(), limiter, async (reg, res, next) => {
 
     } catch (error) {
         logger('error', 'Error at saving gift' + error)
+        next(error);
+    }
+});
+
+router.get("/claim", limiter, async (reg, res, next) => {
+    try {
+        const value = await claimKey.validateAsync(reg.query)
+
+        DB.gift.read.keysave(value.URL_Token).then((GiftKeyData) => {
+            res.status(200);
+            res.json(GiftKeyData.rows[0]);
+        })
+    } catch (error) {
+        logger('error', 'Error at getting a claim' + error);
+        next(error);
+    }
+});
+
+router.get("/claimkey", limiter, async (reg, res, next) => {
+    try {
+        const value = await claimKey.validateAsync(reg.query)
+
+        DB.gift.read.key(value.URL_Token).then((GiftKey) => {
+            res.status(200);
+            res.json(GiftKey.rows[0].key);
+        })
+        
+    } catch (error) {
+        logger('error', 'Error at getting a claimkey' + error);
         next(error);
     }
 });

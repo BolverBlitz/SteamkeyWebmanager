@@ -49,6 +49,10 @@ app.get('/addkeys', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'www-public', 'addkeys.html'));
 });
 
+app.get('/claim', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'www-public', 'claim.html'));
+});
+
 app.use('/assets', express.static(path.join(__dirname, '..', 'www-public', 'assets')));
 
 //Load APIs

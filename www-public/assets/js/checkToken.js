@@ -1,8 +1,9 @@
 /**
  * This will check the current saved Token (if exists) if its valid
+ * @param {boolean} NoForward If ture, it will not forward to login page
  * @returns {Promise}
  */
-function CheckTokenValidity() {
+function CheckTokenValidity(NoForward = false) {
   return new Promise(function (resolve, reject) {
     const getUrl = window.location;
     const baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
@@ -20,12 +21,16 @@ function CheckTokenValidity() {
           clearLocalStorrage()
           const getUrl = window.location;
           const baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
-          window.location.replace(`${baseUrl}`);
+          if(!NoForward){
+            window.location.replace(`${baseUrl}`); //2Fa Login Page
+          }
         }
       });
     } else {
       clearLocalStorrage()
-      window.location.replace(`${baseUrl}login`); //2Fa Login Page
+      if(!NoForward){
+        window.location.replace(`${baseUrl}login`); //2Fa Login Page
+      }
     }
   });
 }
