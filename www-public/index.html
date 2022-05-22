@@ -195,7 +195,12 @@
                 name="mykeys"
                 onchange="initTable()"
             />Show only my keys
-        `);
+          `);
+          });
+
+          posting.fail(function (err) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("username");
           });
         }
       }
