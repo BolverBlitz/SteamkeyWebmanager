@@ -49,17 +49,68 @@ router.post("/create", tokenpermissions(), limiter, async (reg, res, next) => {
         const value = await createGift.validateAsync(reg.body);
 
         DB.key.read.keysave(value.KeyID).then((KeyData) => {
-            console.log(KeyData.rows[0].owner, reg.check.Data.username);
-            
-            if(KeyData.rows[0].owner !== reg.check.Data.username) {
+
+            if (KeyData.rows[0].owner !== reg.check.Data.username) {
                 res.status(401);
                 res.json({
                     Message: 'You are not the owner of this key.'
                 });
+            } else {
+                if (KeyData.rows[0].status === 1 || KeyData.rows[0].status === 2) {
+                    DB.key.update.gifted(value.KeyID).then(() => {
+                        const url_token = randomString(24);
+                        DB.gift.write.gift(value.KeyID, url_token, false, null).then(() => {
+                            res.status(200);
+                            res.json({
+                                Message: 'Gift created.',
+                                URL_Token: url_token,
+                                Key_Name: KeyData.rows[0].name
+                            });
+                        }).catch((err) => {
+                            logger('error', 'Error creating gift.' + err);
+                            res.status(500);
+                            res.json({
+                                Message: 'Error creating gift.'
+                            });
+                        });
+                    }).catch((err) => {
+                        logger('error', 'Error updating status of key.', err);
+                        res.status(500);
+                        res.json({
+                            Message: 'Error updating status of key.'
+                        });
+                    });
+                } else if (KeyData.rows[0].status === 3) {
+                    DB.gift.read.url(value.KeyID).then((GiftData) => {
+                        if (GiftData.rows[0].url_token === null) {
+                            res.status(500);
+                            res.json({
+                                Message: 'No gift found, key status broken.'
+                            });
+                        } else {
+                            res.status(200);
+                            res.json({
+                                Message: 'Gift found.',
+                                URL_Token: GiftData.rows[0].url_token,
+                                Key_Name: KeyData.rows[0].name
+                            });
+                        }
+                    }).catch((err) => {
+                        logger('error', 'Error reading gift.', err);
+                        res.status(500);
+                        res.json({
+                            Message: 'Error reading gift.'
+                        });
+                    });
+                } else {
+                    res.status(410);
+                    res.json({
+                        Message: 'This key is already in use.'
+                    });
+                }
             }
-            
         });
-        
+
     } catch (error) {
         logger('error', 'Error at saving gift' + error)
         next(error);
