@@ -16,6 +16,64 @@
             background-color: #6c6c6c;
         }
 
+        /* Succsess Button */
+        .buttonSuccess {
+            background-color: #275EFE;
+            /* Green */
+            border: none;
+            color: white;
+            padding: 16px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            cursor: pointer;
+        }
+
+        .buttonSuccess:hover {
+            background-color: #0b7901;
+            /* Green */
+            color: white;
+        }
+
+        /* Fail Button */
+        .buttonFail {
+            background-color: #275EFE;
+            /* Green */
+            border: none;
+            color: white;
+            padding: 16px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            cursor: pointer;
+        }
+
+        .buttonFail:hover {
+            background-color: #c00606;
+            /* Green */
+            color: white;
+        }
+
+        @keyframes highlight {
+            0% {
+                background: #ffff99 !important;
+            }
+            100% {
+                background: none !important;
+            }
+        }
+
+        .highlight {
+            animation: highlight 2s !important;
+            border-radius: 6px !important;
+        }
+
         /* Style the Table */
         * {
         box-sizing: border-box;
@@ -104,7 +162,7 @@
         input[type="url"],
         textarea,
         select {
-            background: rgba(255, 255, 255, .1) !important;
+            background: rgba(255, 255, 255, .1);
             border: none !important;
             border-radius: 4px !important;
             font-size: 16px !important;
@@ -115,10 +173,10 @@
             box-sizing: border-box !important;
             -webkit-box-sizing: border-box !important;
             -moz-box-sizing: border-box !important;
-            background-color: rgb(106, 116, 117) !important;
+            background-color: rgb(106, 116, 117);
             color: #ffffff !important;
             -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset !important;
-            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset !important;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset;
             margin-bottom: 30px !important;
 
         }
@@ -133,7 +191,7 @@
         input[type="url"]:focus,
         textarea:focus,
         select:focus {
-            background: #d2d9dd !important;
+            background: #2d2e29 !important;
         }
 
         .forms textarea {
@@ -346,8 +404,19 @@
             <input type="text" id="username" placeholder='Write here...'> 
             <input id="SubmitButton" type="submit" value="Get your game!" />
         </form>
-        <div id="result"></div>
-        <div id="output"></div>
+    </div>
+    <div id="wrapper" style="display: flex; flex-direction: column; justify-content: center; gap: 15px; align-items: center; height: 15vh;">
+        <div id="first">
+            <div id="result"></div>
+        </div>
+        <div id="flex-vertical" style="display: flex; flex-direction: row; gap: 25px;">
+            <div id="second-l">
+                <div id="button_succsess"></div>
+            </div>
+            <div id="second-r">
+                <div id="button_fail"></div>
+            </div>
+        </div>
     </div>
 </body>
 </div>
@@ -362,6 +431,7 @@
 
     const SnackBox_Timeout = 400;
     const SnackBox_Location = "tr";
+    const KeyVoteStatus = ["Worked", "Invalid"]
 
     const getUrl = window.location;
     const baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
@@ -381,6 +451,58 @@
             }
         return b;
     })(window.location.search.substr(1).split('&'));
+
+    /**
+     * Will send a request to the server to tell if key worked or not
+     * @param {string} owner
+     * @param {boolean} worked
+     * @param {string} id
+     */
+    function send_keystatus(owner, worked, id){
+        const posting = $.ajax({
+            url: `${baseUrl}api/application/gifts/vote`,
+            type: 'POST',
+            contentType: "application/json; charset=utf-8",
+            headers: { "Authorization": 'Bearer ' + localStorage.getItem('token') },
+            data: JSON.stringify({KeyID: id, Username: owner, Worked: worked}),
+            success: function (StatusResponse) {
+                SnackBar({
+                        message: `You voted ${KeyVoteStatus[+!worked]}!`,
+                        width: "400px",
+                        speed: SnackBox_Timeout,
+                        position: SnackBox_Location,
+                        status: "success",
+                    });
+            },
+            error: function (err) {
+                if (err.status === 429) {
+                    SnackBar({
+                        message: `Error 429 - Too many requests`,
+                        width: "400px",
+                        speed: SnackBox_Timeout,
+                        position: SnackBox_Location,
+                        status: "error",
+                    });
+                } else if (err.status === 500) {
+                    SnackBar({
+                        message: `Error 500 - Internal Server Error`,
+                        width: "400px",
+                        speed: SnackBox_Timeout,
+                        position: SnackBox_Location,
+                        status: "error",
+                    });
+                } else if (err.status === 401 || err.status === 400 || err.status === 403) {
+                    SnackBar({
+                        message: `Error ${err.status} - ${err.responseJSON.Message}`,
+                        width: "400px",
+                        speed: SnackBox_Timeout,
+                        position: SnackBox_Location,
+                        status: "error",
+                    });
+                }
+            }
+        });
+    }
 
     $('#username').val(localStorage.getItem('username')); //Pre-fill username if available
 
@@ -428,14 +550,52 @@
         $("#GetKey").submit(function (event) {
         event.preventDefault();
 
+            if($('#username').val() === ""){
+                SnackBar({
+                    message: `Please enter a username`,
+                    width: "400px",
+                    speed: SnackBox_Timeout,
+                    position: SnackBox_Location,
+                    status: "error",
+                });
+
+                $('#username').addClass("highlight");
+				setTimeout(function () {
+					$('#username').removeClass('highlight');
+				}, 2000);
+
+                return;
+            }
+
             const posting = $.ajax({
                 url: `${baseUrl}api/application/gifts/claimkey`,
                 type: 'GET',
                 contentType: "application/json; charset=utf-8",
                 headers: { "Authorization": 'Bearer ' + localStorage.getItem('token') },
-                data: {URL_Token: qs.URL_Token},
+                data: {URL_Token: qs.URL_Token, Username: $('#username').val()},
                 success: function (GiftData) {
-                    console.log(GiftData);
+                    if(navigator){
+                        SnackBar({
+                            message: `Key copyed to your clipboard`,
+                            width: "400px",
+                            speed: SnackBox_Timeout,
+                            position: SnackBox_Location,
+                            status: "success",
+                        });
+                        navigator.clipboard.writeText(`${GiftData}`);
+                    }else{
+                        SnackBar({
+                        message: `Key could not be copied to your clipboard`,
+                        width: "400px",
+                        speed: SnackBox_Timeout,
+                        position: SnackBox_Location,
+                        status: "success",
+                    });
+                    }
+
+                    $('#result').html(`<a style="font-style: oblique; font-size: 25px; text-decoration: none; color:yellow;" href="https://store.steampowered.com/account/registerkey?keys=${GiftData.key}" target="_blank">${GiftData.key}</a>`);
+                    $('#button_succsess').html(`<button id="BackButton" class="buttonSuccess buttonSuccess" onclick="send_keystatus('${GiftData.owner}', true, '${GiftData.id}')">Worked</button>`);
+                    $('#button_fail').html(`<button id="BackButton" class="buttonFail buttonFail" onclick="send_keystatus('${GiftData.owner}', false, '${GiftData.id}')">Invalid</button>`);
                 },
                 error: function (err) {
                     if (err.status === 429) {
@@ -456,7 +616,7 @@
                         });
                     } else if (err.status === 401 || err.status === 400 || err.status === 403) {
                         SnackBar({
-                            message: `Error ${err.status} - ${err.statusText}`,
+                            message: `Error ${err.status} - ${err.responseJSON.Message}`,
                             width: "400px",
                             speed: SnackBox_Timeout,
                             position: SnackBox_Location,

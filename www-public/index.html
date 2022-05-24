@@ -11,20 +11,25 @@
         box-sizing: border-box;
       }
 
+      body {
+            background-color: #6c6c6c;
+        }
+
       #TableSearch {
+        background-color: #949494;
         background-position: 10px 10px;
         background-repeat: no-repeat;
         width: 100%;
         font-size: 16px;
         padding: 12px 20px 12px 40px;
-        border: 1px solid #ddd;
+        border: 1px solid #444444;
         margin-bottom: 12px;
       }
 
       #KeyTable {
         border-collapse: collapse;
         width: 100%;
-        border: 1px solid #ddd;
+        border: 1px solid #444444;
         font-size: 18px;
       }
 
@@ -35,17 +40,17 @@
       }
 
       #KeyTable tr {
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #444444;
       }
 
       #KeyTable tr.header,
       #KeyTable tr:hover {
-        background-color: #f1f1f1;
+        background-color: #444444;
       }
 
       /* Dropdown Button */
       .dropbtn {
-        background-color: #ddd;
+        background-color: #444444;
         margin-bottom: 8px;
         color: white;
         padding: 8px;
@@ -236,15 +241,25 @@
           headers: { Authorization: "Bearer " + localStorage.getItem("token") },
           data: JSON.stringify({KeyID: KeyID}),
           success: function (Gift) {
-            navigator.clipboard.writeText(`${baseUrl}claim?URL_Token=${Gift.URL_Token}`);
-            SnackBar({
+            if(navigator){
+              navigator.clipboard.writeText(`${baseUrl}claim?URL_Token=${Gift.URL_Token}`);
+              SnackBar({
                 message: `Copied gift of ${Gift.Key_Name} to clipboard`,
                 width: "600px",
                 speed: SnackBox_Timeout,
                 position: SnackBox_Location,
                 status: "success",
               });
-              getTableData();
+            }else{
+              SnackBar({
+                message: `Could not copy gift of ${Gift.Key_Name} to clipboard`,
+                width: "600px",
+                speed: SnackBox_Timeout,
+                position: SnackBox_Location,
+                status: "success",
+              });
+            }
+            getTableData();
           },
           error: function (err) {
             console.log(err)
@@ -369,7 +384,7 @@
                     <tr>
                         <td title="${PossibleKeyStatusText[keystatus[i].status - 1]}" >${PossibleKeyStatus[keystatus[i].status - 1]}</td>
                         <td>${keystatus[i].name}</td>
-                        <td style="color: ${getColor(keystatus[i].keys_success / key)} !important" title="${keystatus[i].keys_success / key}">${keystatus[i].owner} (${(keystatus[i].keys_success / key) * 100}%)</td>
+                        <td style="color: ${getColor(keystatus[i].keys_success / key)} !important" title="${((keystatus[i].keys_success / key) * 100).toFixed(0)}%">${keystatus[i].owner} (${((keystatus[i].keys_success / key) * 100).toFixed(0)}%)</td>
                         <td>${getButtons(keystatus[i].id, keystatus[i].status)}</td>
                     </tr>
                     `);
