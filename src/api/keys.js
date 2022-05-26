@@ -1,6 +1,7 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const Joi = require('joi');
+const { encrypt } = require('../../lib/encryption');
 const SanitizeHtml = require('sanitize-html');
 const DB = require('../../lib/db/pg_sql');
 const { logger } = require('../../lib/logger');
@@ -104,7 +105,7 @@ router.post("/", tokenpermissions(), limiter, async (reg, res, next) => {
 
                 if (!KeyExistsList[i]) {
                     KeyAdded.push(KeyData);
-                    DBWrites.push(DB.key.write.key(randomString(64), KeyData.Key, KeyData.Name, convertStatusToNumber(KeyData.Status), KeyData.Owner));
+                    DBWrites.push(DB.key.write.key(randomString(64), encrypt(KeyData.Key), KeyData.Name, convertStatusToNumber(KeyData.Status), KeyData.Owner));
                 } else {
                     KeyRejected.push(KeyData);
                 }

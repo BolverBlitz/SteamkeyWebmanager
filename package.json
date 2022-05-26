@@ -1,6 +1,6 @@
 {
   "name": "steamkeyweb",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "webpanel to share steam keys",
   "main": "index.js",
   "scripts": {

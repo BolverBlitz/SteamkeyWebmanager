@@ -1,11 +1,12 @@
 const express = require("express");
 const rateLimit = require("express-rate-limit");
 const Joi = require("joi");
+const { decrypt } = require('../../lib/encryption');
 const SanitizeHtml = require("sanitize-html");
 const DB = require("../../lib/db/pg_sql");
 const { logger } = require("../../lib/logger");
 const { tokenpermissions } = require("../middlewares/tokenVerify");
-const { randomString, convertStatusToNumber } = require("../../lib/util");
+const { randomString } = require("../../lib/util");
 
 const PluginConfig = {};
 
@@ -171,7 +172,7 @@ router.get("/claimkey", limiter, async (reg, res, next) => {
                 DB.gift.delete.gift(value.URL_Token).then(() => {
                   res.status(200);
                   res.json({
-                    key: GiftKey.rows[0].key,
+                    key: decrypt(GiftKey.rows[0].key),
                     owner: GiftData.rows[0].owner,
                     id: GiftData.rows[0].id,
                   });

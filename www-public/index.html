@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Steam Key List</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/checkToken.js"></script>
@@ -380,11 +381,17 @@
               const key =
                 Number(keystatus[i].keys_success) +
                 Number(keystatus[i].keys_failed);
+              let vote_rate = ((keystatus[i].keys_success / key) * 100).toFixed(0);
+              if(isNaN(vote_rate)){
+                vote_rate = "No Votes";
+              }else{
+                vote_rate = `${vote_rate}%`;
+              }
               $("#KeyTable").append(`
                     <tr>
                         <td title="${PossibleKeyStatusText[keystatus[i].status - 1]}" >${PossibleKeyStatus[keystatus[i].status - 1]}</td>
                         <td>${keystatus[i].name}</td>
-                        <td style="color: ${getColor(keystatus[i].keys_success / key)} !important" title="${((keystatus[i].keys_success / key) * 100).toFixed(0)}%">${keystatus[i].owner} (${((keystatus[i].keys_success / key) * 100).toFixed(0)}%)</td>
+                        <td style="color: ${getColor(keystatus[i].keys_success / key)} !important" title="${vote_rate}%">${keystatus[i].owner} (${vote_rate})</td>
                         <td>${getButtons(keystatus[i].id, keystatus[i].status)}</td>
                     </tr>
                     `);
