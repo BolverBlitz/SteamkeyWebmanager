@@ -393,7 +393,7 @@
                     <tr>
                         <td title="${PossibleKeyStatusText[keystatus[i].status - 1]}" >${PossibleKeyStatus[keystatus[i].status - 1]}</td>
                         <td>${keystatus[i].name}</td>
-                        <td style="color: ${getColor(keystatus[i].keys_success / key)} !important" title="${vote_rate}% of this user worked.">${keystatus[i].owner} (${vote_rate})</td>
+                        <td style="color: ${getColor(keystatus[i].keys_success / key)} !important" title="${vote_rate} of this users keys worked.">${keystatus[i].owner} (${vote_rate})</td>
                         <td>${getButtons(keystatus[i].id, keystatus[i].status)}</td>
                     </tr>
                     `);
