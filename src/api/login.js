@@ -67,7 +67,7 @@ router.post("/login", hartlimiter, async (reg, res, next) => {
                         }
 
                         if (User_response[0].extraverify) {
-                            DB.user.update.Login2FA(User_response[0].username, new Date()).then(function (Login2FA_response) {
+                            DB.user.update.Login2FA(User_response[0].username, new Date()).then(function () {
                                 res.status(206);
                                 res.json({
                                     message: '2FA Required',
@@ -149,7 +149,7 @@ router.post("/login/2fa", hartlimiter, async (reg, res, next) => {
                             charset: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!'
                         });
 
-                        bcrypt.hash(IP, parseInt(process.env.SaltRounds) / 2, function (err, ip_hash) { //Only half Saltrounds cuz of SPEEEED || Added in version 0.0.3 in a rush (Not well tested)
+                        bcrypt.hash(IP, parseInt(process.env.SaltRounds, 10) / 2, function (err, ip_hash) { //Only half Saltrounds cuz of SPEEEED || Added in version 0.0.3 in a rush (Not well tested)
                             Promise.all([DB.webtoken.write.webtoken(value.username, ip_hash, UserAgent.source, WebToken, User_response[0].lang), DB.permission.read.permission(value.username)]).then(function (result) {
                                 DB.user.update.Login2FA(value.username).then(function () {
                                     res.status(200);
@@ -256,14 +256,14 @@ router.post("/logout", limiter, async (reg, res, next) => {
         }
         TV.check(value.token, para).then(function (Check) {
             if (Check.State) {
-                DB.webtoken.delete.webtoken(value.token).then(function (Check) {
+                DB.webtoken.delete.webtoken(value.token).then(function () {
                     res.status(200);
                     res.json({
                         Message: "Sucsess"
                     });
                 })
             } else {
-                DB.webtoken.delete.webtoken(value.token).then(function (Check) {
+                DB.webtoken.delete.webtoken(value.token).then(function () {
                     res.status(401);
                     res.json({
                         Message: "Token invalid"
