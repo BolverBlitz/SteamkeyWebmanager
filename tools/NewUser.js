@@ -7,11 +7,11 @@ const twofactor = require("node-2fa");
 const qrcode = require('qrcode-terminal');
 const DB = require('../lib/db/pg_sql');
 
-if (isNaN(parseInt(process.env.SaltRounds))) {
+if (isNaN(parseInt(process.env.SaltRounds, 10))) {
     console.log(".env wurde nicht gefunden!")
 }
 
-const SaltRounds = parseInt(process.env.SaltRounds);
+const SaltRounds = parseInt(process.env.SaltRounds, 10);
 
 function askQuestion(query) {
     const rl = readline.createInterface({

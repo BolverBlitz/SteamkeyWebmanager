@@ -87,7 +87,7 @@ router.post("/login", hartlimiter, async (reg, res, next) => {
                                 charset: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!'
                             });
 
-                            bcrypt.hash(IP, parseInt(process.env.SaltRounds) / 2, function (err, ip_hash) { //Only half Saltrounds cuz of SPEEEED || Added in version 0.0.3 in a rush (Not well tested)
+                            bcrypt.hash(IP, parseInt(process.env.SaltRounds, 10) / 2, function (err, ip_hash) { //Only half Saltrounds cuz of SPEEEED || Added in version 0.0.3 in a rush (Not well tested)
                                 Promise.all([DB.webtoken.write.webtoken(User_response[0].username, ip_hash, UserAgent.source, WebToken, User_response[0].lang), DB.permission.read.permission(User_response[0].username)]).then(function (result) {
                                     res.status(200);
                                     res.json({
