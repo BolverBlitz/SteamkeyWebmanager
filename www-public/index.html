@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Steam Key List</title>
+    <title id="IndexTitle">Steam Key List</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/checkToken.js"></script>
@@ -367,6 +367,8 @@
           headers: { Authorization: "Bearer " + localStorage.getItem("token") },
           data: exportjson,
           success: function (keystatus) {
+            console.log(keystatus.length);
+            $("#IndexTitle").text(`Steam Key List (${keystatus.length})`);
             $("#Table").html(`
                 <table id="KeyTable">
                     <tr class="header">
