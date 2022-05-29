@@ -35,3 +35,12 @@ On application startup there is a check if the encryption key was not modifyed.
 *Only actual users can store data in the database, every user input gets striped of all html tags.*
 #### 2FA
 *A user can choose to use 2FA when the accound is created. Workes with all apps like ***Google Authenticator****
+
+# Installation
+1. Clone this repo `git clone https://github.com/BolverBlitz/SteamkeyWebmanager`
+2. `mv .env.example .env` and edit it
+3. `npm i`
+4. `node index.js
+
+## PM2
+`pm2 start index.js --name="SteamkeyWebmanager"`
