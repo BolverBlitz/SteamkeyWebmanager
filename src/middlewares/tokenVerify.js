@@ -31,7 +31,16 @@ const tokenpermissions = (skip = false) => {
         if (reg.headers['authorization'] != undefined) {
             UserToken = reg.headers['authorization'].replace('Bearer ', '');
         } else {
-            next(new Error ('No token in request found'));
+            if(!skip) {
+                return next(new Error ('No token in request found'));
+            } else {
+                const PermissionsObject = {
+                    read: [],
+                    write: []
+                };
+                reg.permissions = PermissionsObject;
+                return next()
+            }
         }
 
 
