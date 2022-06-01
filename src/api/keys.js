@@ -38,7 +38,7 @@ const customJoi = Joi.extend((joi) => {
 
 const limiter = rateLimit({
     windowMs: 60 * 1000,
-    max: 30
+    max: process.env.RateLimit,
 });
 
 const getKeysschema = Joi.object({
