@@ -18,7 +18,7 @@ const PluginDocs = '';
 
 const limiter = rateLimit({
     windowMs: 60 * 1000,
-    max: 30
+    max: process.env.RateLimit
 });
 
 const SetLang = Joi.object({

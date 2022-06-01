@@ -21,12 +21,12 @@ const PluginDocs = '';
 
 const limiter = rateLimit({
     windowMs: 60 * 1000,
-    max: 30
+    max: process.env.RateLimit
 });
 
 const hartlimiter = rateLimit({
     windowMs: 60 * 1000 * 15,
-    max: 6
+    max: (process.env.RateLimit/4).toFixed(0)
 });
 
 const LoginCheck = Joi.object({
