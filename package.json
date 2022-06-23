@@ -25,6 +25,7 @@
     "express-useragent": "^1.0.15",
     "helmet": "^4.1.0",
     "joi": "^17.5.0",
+    "js-object-cache": "^0.0.1",
     "morgan": "^1.10.0",
     "node-2fa": "^2.0.3",
     "pg": "^8.7.1",
