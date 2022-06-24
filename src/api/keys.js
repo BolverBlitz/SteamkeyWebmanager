@@ -120,6 +120,7 @@ router.post("/", tokenpermissions(), limiter, async (reg, res, next) => {
                 res.status(200);
                 res.json({ KeyAdded, KeyRejected })
             }).catch(err => {
+                Decrypt_Cache.clear() // Flush cache, just in case and to not worry about keeping it up to date :D
                 logger('error', 'Error when writing one or multiple keys to DB ' + err);
                 res.status(500);
                 res.json({ error: 'Error when writing one or multiple keys to DB ' + err });
@@ -127,6 +128,7 @@ router.post("/", tokenpermissions(), limiter, async (reg, res, next) => {
 
         });
     } catch (error) {
+        Decrypt_Cache.clear() // Flush cache, just in case and to not worry about keeping it up to date :D
         logger('error', 'Error at saving keys' + error)
         next(error);
     }
