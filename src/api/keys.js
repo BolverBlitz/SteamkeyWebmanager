@@ -52,7 +52,7 @@ const getKeyData = Joi.object({
 })
 
 const newkeysschema = customJoi.object({
-    Status: customJoi.string().max(256).htmlStrip().required().max(3),
+    Status: customJoi.string().htmlStrip().required().max(3),
     Keys: customJoi.string().trim().required().htmlStrip(),
     Owner: customJoi.string().trim().required().htmlStrip(),
 });
