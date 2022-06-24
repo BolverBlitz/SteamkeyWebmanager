@@ -223,11 +223,15 @@
       /**
        * Get buttons based on login status for a key
        */
-      function getButtons(KeyID, Status) {
+      function getButtons(KeyID, Status, Owner) {
         if (localStorage.getItem("token") === null || Status === 4) {
           return `<a title="Key Info" style="position: center; cursor: pointer" onClick="GoTo_infokey('${KeyID}')">ℹ️</a>`;
         } else {
-          return `<a title="Key Info" style="position: center; cursor: pointer" onClick="GoTo_infokey('${KeyID}')">ℹ️</a> <a title="Create Gift Link" style="cursor: pointer" onClick="GoTo_giftkey('${KeyID}')">🎁</a>`;
+          if(Owner === localStorage.getItem("username")){
+            return `<a title="Key Info" style="position: center; cursor: pointer" onClick="GoTo_infokey('${KeyID}')">ℹ️</a> <a title="Create Gift Link" style="cursor: pointer" onClick="GoTo_giftkey('${KeyID}')">🎁</a>`;
+          }else{
+            return `<a title="Key Info" style="position: center; cursor: pointer" onClick="GoTo_infokey('${KeyID}')">ℹ️</a>`;
+          }
         }
       }
 
@@ -394,7 +398,7 @@
                         <td title="${PossibleKeyStatusText[keystatus[i].status - 1]}" >${PossibleKeyStatus[keystatus[i].status - 1]}</td>
                         <td>${keystatus[i].name}</td>
                         <td style="color: ${getColor(keystatus[i].keys_success / key)} !important" title="${vote_rate} of this users keys worked.">${keystatus[i].owner} (${vote_rate})</td>
-                        <td>${getButtons(keystatus[i].id, keystatus[i].status)}</td>
+                        <td>${getButtons(keystatus[i].id, keystatus[i].status, keystatus[i].owner)}</td>
                     </tr>
                     `);
             }
