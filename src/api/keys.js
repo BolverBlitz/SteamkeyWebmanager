@@ -1,12 +1,13 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const Joi = require('joi');
-const { encrypt } = require('../../lib/encryption');
+const { encrypt, decrypt } = require('../../lib/encryption');
 const SanitizeHtml = require('sanitize-html');
 const DB = require('../../lib/db/pg_sql');
 const { logger } = require('../../lib/logger');
 const { tokenpermissions } = require('../middlewares/tokenVerify');
 const { randomString, convertStatusToNumber } = require('../../lib/util');
+const Decrypt_Cache = require('js-object-cache')
 
 
 const PluginConfig = {
@@ -92,18 +93,21 @@ router.post("/", tokenpermissions(), limiter, async (reg, res, next) => {
             ))
         )
 
-        const DBKeyChecks = [];
         const DBWrites = [];
-        for (i = 0; i < TableDataFiltered.length; i++) {
-            KeyData = TableDataFiltered[i];
-            DBKeyChecks.push(DB.key.read.check.key(KeyData.Key));
-        }
 
-        Promise.all(DBKeyChecks).then((KeyExistsList) => {
+        DB.key.read.all.encrypted().then((KeyDataEncrypted) => {
+            for (i = 0; i < KeyDataEncrypted.rows.length; i++) {
+                KeyDataEncrypted.rows[i].key = decrypt(KeyDataEncrypted.rows[i].key);
+            }
+
+            Decrypt_Cache.set_data('key', 'key', KeyDataEncrypted.rows); // Set all keys in cache (NOT ENCRYPTED)
+
+            KeyDataEncrypted = null; // Delete unused variable that holds decrypted keys, just in case.
+
+
             for (i = 0; i < TableDataFiltered.length; i++) {
                 KeyData = TableDataFiltered[i];
-
-                if (!KeyExistsList[i]) {
+                if (!Decrypt_Cache.has(KeyData.Key)) { // Check if key is already in cache
                     KeyAdded.push(KeyData);
                     DBWrites.push(DB.key.write.key(randomString(64), encrypt(KeyData.Key), KeyData.Name, convertStatusToNumber(KeyData.Status), KeyData.Owner));
                 } else {
@@ -112,6 +116,7 @@ router.post("/", tokenpermissions(), limiter, async (reg, res, next) => {
             }
 
             Promise.all(DBWrites).then(() => {
+                Decrypt_Cache.clear() // Flush cache, just in case and to not worry about keeping it up to date :D
                 res.status(200);
                 res.json({ KeyAdded, KeyRejected })
             }).catch(err => {
@@ -120,10 +125,6 @@ router.post("/", tokenpermissions(), limiter, async (reg, res, next) => {
                 res.json({ error: 'Error when writing one or multiple keys to DB ' + err });
             });
 
-        }).catch((err) => {
-            logger('error', 'Error when writing one or multiple keys to DB ' + err);
-            res.status(500);
-            res.json({ error: 'Error when writing one or multiple keys to DB ' + err });
         });
     } catch (error) {
         logger('error', 'Error at saving keys' + error)
