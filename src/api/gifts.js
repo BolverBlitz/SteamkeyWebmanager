@@ -65,12 +65,7 @@ router.post("/create", tokenpermissions(), limiter, async (reg, res, next) => {
     const value = await createGift.validateAsync(reg.body);
 
     DB.key.read.keysave(value.KeyID).then((KeyData) => {
-      if (KeyData.rows[0].owner !== reg.check.Data.username) {
-        res.status(401);
-        res.json({
-          Message: "You are not the owner of this key.",
-        });
-      } else {
+      if (KeyData.rows[0].owner === reg.check.Data.username || KeyData.rows[0].giftaccess === "global") {
         if (KeyData.rows[0].status === 1 || KeyData.rows[0].status === 2) {
           DB.key.update
             .gifted(value.KeyID)
@@ -132,6 +127,11 @@ router.post("/create", tokenpermissions(), limiter, async (reg, res, next) => {
             Message: "This key is already in use.",
           });
         }
+      } else {
+        res.status(401);
+        res.json({
+          Message: "You are not the owner of this key.",
+        });
       }
     });
   } catch (error) {

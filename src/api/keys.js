@@ -55,6 +55,7 @@ const newkeysschema = customJoi.object({
     Status: customJoi.string().htmlStrip().required().max(3),
     Keys: customJoi.string().trim().required().htmlStrip(),
     Owner: customJoi.string().trim().required().htmlStrip(),
+    GiftAccsesSelect: customJoi.string().trim().valid('me', 'global').required().htmlStrip(),
 });
 
 const router = express.Router();

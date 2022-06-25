@@ -223,11 +223,11 @@
       /**
        * Get buttons based on login status for a key
        */
-      function getButtons(KeyID, Status, Owner) {
+      function getButtons(KeyID, Status, Owner, giftaccess) {
         if (localStorage.getItem("token") === null || Status === 4) {
           return `<a title="Key Info" style="position: center; cursor: pointer" onClick="GoTo_infokey('${KeyID}')">ℹ️</a>`;
         } else {
-          if(Owner === localStorage.getItem("username")){
+          if(Owner === localStorage.getItem("username") || giftaccess === 'global'){
             return `<a title="Key Info" style="position: center; cursor: pointer" onClick="GoTo_infokey('${KeyID}')">ℹ️</a> <a title="Create Gift Link" style="cursor: pointer" onClick="GoTo_giftkey('${KeyID}')">🎁</a>`;
           }else{
             return `<a title="Key Info" style="position: center; cursor: pointer" onClick="GoTo_infokey('${KeyID}')">ℹ️</a>`;
@@ -371,7 +371,7 @@
           headers: { Authorization: "Bearer " + localStorage.getItem("token") },
           data: exportjson,
           success: function (keystatus) {
-            console.log(keystatus.length);
+            //console.log(keystatus);
             $("#IndexTitle").text(`Steam Key List (${keystatus.length})`);
             $("#Table").html(`
                 <table id="KeyTable">
@@ -398,7 +398,7 @@
                         <td title="${PossibleKeyStatusText[keystatus[i].status - 1]}" >${PossibleKeyStatus[keystatus[i].status - 1]}</td>
                         <td>${keystatus[i].name?.split("")?.join("​")}</td>
                         <td style="color: ${getColor(keystatus[i].keys_success / key)} !important" title="${vote_rate} of this users keys worked.">${keystatus[i].owner?.split("")?.join("​")} (${vote_rate})</td>
-                        <td>${getButtons(keystatus[i].id, keystatus[i].status, keystatus[i].owner)}</td>
+                        <td>${getButtons(keystatus[i].id, keystatus[i].status, keystatus[i].owner, keystatus[i].giftaccess)}</td>
                     </tr>
                     `);
             }

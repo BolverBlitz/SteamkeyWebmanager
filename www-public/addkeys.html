@@ -347,7 +347,12 @@
                         <optgroup label="Status List">
                         <option value="ava">Avaible</option>
                         <option value="unk">Unknown</option>
-                </select>   
+                    </select>   
+                    <label id="StatusDiscription" for="Status">Who can gift it to others:</label>
+                    <select id="GiftAccsesSelect" name="Status">
+                        <option value="me">Just me</option>
+                        <option value="global">Every loged in user</option>
+                    </select> 
                     <label id="KeysDataDiscription" for="Status">Keys and game/software names:</label>
                     <textarea onkeypress="GeneratePreviewTable()" onchange="GeneratePreviewTable()" style="height: 140px;" id="keysdata" placeholder=''></textarea>
                     <input id="SubmitButton" type="submit" value="Apply" />
@@ -396,7 +401,7 @@
                     "Status": StatusToEmote($('#StatusSelect').val()),
                     "Name": KeyName.join(":").trim(),
                     "Key": SteamKey.trim(),
-                    "Owner": $('#owner').val()
+                    "Owner": $('#owner').val(),
                 });
             }
         }
@@ -436,7 +441,8 @@
         const exportjson = JSON.stringify({
             Status: $('#StatusSelect').val(),
             Keys: $('#keysdata').val(),
-            Owner: $('#owner').val()
+            Owner: $('#owner').val(),
+            GiftAccsesSelect: $('#GiftAccsesSelect').val(),
         })
 
         const posting = $.ajax({
