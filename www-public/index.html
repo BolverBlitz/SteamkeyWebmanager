@@ -248,7 +248,7 @@
           success: function (Gift) {
             if(navigator){
               try {
-                navigator?.clipboard?.writeText(`${baseUrl}claim?URL_Token=${Gift.URL_Token}`);
+                navigator.clipboard.writeText(`xx}claim?URL_Token=xx`);
               } catch (error) {
                 SnackBar({
                 message: `Copy to clipboard failed: ${baseUrl}claim?URL_Token=${Gift.URL_Token}`,
