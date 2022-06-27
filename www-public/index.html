@@ -247,7 +247,7 @@
           data: JSON.stringify({KeyID: KeyID}),
           success: function (Gift) {
             if(navigator){
-              navigator.clipboard.writeText(`${baseUrl}claim?URL_Token=${Gift.URL_Token}`);
+              navigator?.clipboard?.writeText(`${baseUrl}claim?URL_Token=${Gift.URL_Token}`);
               SnackBar({
                 message: `Copied gift of ${Gift.Key_Name} to clipboard`,
                 width: "600px",

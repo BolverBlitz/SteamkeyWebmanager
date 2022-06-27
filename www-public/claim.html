@@ -582,7 +582,7 @@
                             position: SnackBox_Location,
                             status: "success",
                         });
-                        navigator.clipboard.writeText(`${GiftData}`);
+                        navigator?.clipboard?.writeText(`${GiftData}`);
                     }else{
                         SnackBar({
                         message: `Key could not be copied to your clipboard`,
