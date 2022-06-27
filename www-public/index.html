@@ -247,7 +247,17 @@
           data: JSON.stringify({KeyID: KeyID}),
           success: function (Gift) {
             if(navigator){
-              navigator?.clipboard?.writeText(`${baseUrl}claim?URL_Token=${Gift.URL_Token}`);
+              try {
+                navigator?.clipboard?.writeText(`${baseUrl}claim?URL_Token=${Gift.URL_Token}`);
+              } catch (error) {
+                SnackBar({
+                message: `Copy to clipboard failed: ${baseUrl}claim?URL_Token=${Gift.URL_Token}`,
+                width: "600px",
+                speed: SnackBox_Timeout*5,
+                position: SnackBox_Location,
+                status: "success",
+              });
+              }
               SnackBar({
                 message: `Copied gift of ${Gift.Key_Name} to clipboard`,
                 width: "600px",
