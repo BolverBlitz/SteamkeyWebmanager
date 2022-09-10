@@ -112,6 +112,7 @@
 
     <script>
       let GlobakStatus = "all";
+      let QueryInputString = false;
       const PossibleKeyStatus = ["🟢", "🟡", "🔵", "⚫️"];
       const PossibleKeyStatusText = ["Unused", "Unknown", "Gifted", "Used"];
       const SnackBox_Timeout = 400;
@@ -120,7 +121,20 @@
       $(document).ready(function () {
         CheckTokenValidity();
         getTableData();
+        getURLQuery();
       });
+
+      //Will auto fill the search bar with the search query
+      function getURLQuery(){
+        const getUrl = window.location;
+				const baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
+				const SearchTermFromURL = getUrl.search.split("?").join("")
+        if(SearchTermFromURL != ""){
+          console.log("Search Term: " + SearchTermFromURL);
+          document.getElementById("TableSearch").value = SearchTermFromURL;
+          QueryInputString = true;
+        }
+      }
 
       function search() {
         var input, filter, table, tr, td, i, txtValue;
@@ -420,7 +434,11 @@
                         <td style="color: ${getColor(keystatus[i].keys_success / key)} !important" title="${vote_rate} of this users keys worked.">${keystatus[i].owner?.split("")?.join("​")} (${vote_rate})</td>
                         <td>${getButtons(keystatus[i].id, keystatus[i].status, keystatus[i].owner, keystatus[i].giftaccess)}</td>
                     </tr>
-                    `);
+              `);
+              //If parameter was given in url, perform seach after the table was created
+              if(QueryInputString){
+                search();
+              }
             }
           },
           error: function (err) {
