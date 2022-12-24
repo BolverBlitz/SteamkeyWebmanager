@@ -130,7 +130,6 @@
 				const baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
 				const SearchTermFromURL = getUrl.search.split("?").join("")
         if(SearchTermFromURL != ""){
-          console.log("Search Term: " + SearchTermFromURL);
           document.getElementById("TableSearch").value = SearchTermFromURL;
           QueryInputString = true;
         }
@@ -166,6 +165,47 @@
         getTableData();
       }
 
+      function share() {
+        const getUrl = window.location;
+        const baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
+        const SearchTerm = document.getElementById("TableSearch").value;
+
+        if(SearchTerm == ""){
+          SnackBar({
+                message: `No search term to share`,
+                width: "600px",
+                speed: SnackBox_Timeout,
+                position: SnackBox_Location,
+                fixed: true,
+                status: "error",
+              });
+          return;
+        }
+        
+        // Generate URL and store in clipboard
+
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(`${baseUrl}?${SearchTerm}`);
+          SnackBar({
+                message: `Copied URL to Clipboard`,
+                width: "600px",
+                speed: SnackBox_Timeout,
+                position: SnackBox_Location,
+                fixed: true,
+                status: "success",
+              });
+        } else {
+          SnackBar({
+                message: `Failed to copy URL to Clipboard`,
+                width: "600px",
+                speed: SnackBox_Timeout,
+                position: SnackBox_Location,
+                fixed: true,
+                status: "error",
+              });
+        }
+      }
+
       //Checks if you are logged in, if so you get "Show my Keys" and a logout button. If not, the login button will be displayed
       function CheckTokenValidity() {
         const getUrl = window.location;
@@ -184,6 +224,8 @@
                 <a onclick="setStatus('use')">Used</a>
                 </div>
             </div>
+
+            <button class="dropbtn" style="cursor: pointer;" onclick="share()">Share</button>
         `);
         if (localStorage.getItem("token") !== null) {
           //Token was found, now validate it and if valid forward to main page
@@ -208,6 +250,8 @@
                 </div>
             </div>
 
+            <button class="dropbtn" style="cursor: pointer;" onclick="share()">Share</button>
+
             <input
                 type="checkbox"
                 style="margin-bottom: 15px; margin-right: 5px"
@@ -227,6 +271,7 @@
 
       /**
        * Return a color from red to green. 100% = Green, 0% = Red
+       * @param {Number} value
        */
       function getColor(value) {
         //value from 0 to 1
@@ -249,6 +294,10 @@
         }
       }
 
+      /**
+       * Generate a gift or load a already generated gift
+       * @param {string} KeyID
+       */
       function GoTo_giftkey(KeyID){
         const getUrl = window.location;
         const baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
