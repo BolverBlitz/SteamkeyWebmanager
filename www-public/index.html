@@ -112,7 +112,8 @@
 
     <script>
       let GlobakStatus = "all";
-      let QueryInputString = false;
+      let QueryInputString = false; // Will be true if there was a ? in the url
+      let SetStateQuery = false; // Will be true if the user clicked on a other status in the dropdown menu
       const PossibleKeyStatus = ["🟢", "🟡", "🔵", "⚫️"];
       const PossibleKeyStatusText = ["Unused", "Unknown", "Gifted", "Used"];
       const SnackBox_Timeout = 400;
@@ -162,6 +163,7 @@
 
       function setStatus(status) {
         GlobakStatus = status;
+        SetStateQuery = true;
         getTableData();
       }
 
@@ -485,7 +487,7 @@
                     </tr>
               `);
               //If parameter was given in url, perform seach after the table was created
-              if(QueryInputString){
+              if(QueryInputString || SetStateQuery){
                 search();
               }
             }
