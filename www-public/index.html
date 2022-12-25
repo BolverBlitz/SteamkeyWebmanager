@@ -146,7 +146,7 @@
           td = tr[i].getElementsByTagName("td")[1]; //Cullom ID of the table to search for
           if (td) {
             txtValue = td.textContent || td.innerText;
-            if (txtValue.toUpperCase().indexOf(filter?.split("")?.join("​")) > -1) {
+            if (txtValue.toUpperCase().indexOf(filter?.split("")?.join("‎​")) > -1) {
               tr[i].style.display = "";
             } else {
               tr[i].style.display = "none";
