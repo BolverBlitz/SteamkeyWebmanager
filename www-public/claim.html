@@ -542,7 +542,7 @@
                     });
                 } else if (err.status === 401 || err.status === 400 || err.status === 403) {
                     SnackBar({
-                        message: `Error ${err.status} - ${err.statusText}`,
+                        message: `Error ${err.status} - ${err.responseJSON.Message}`,
                         width: "400px",
                         speed: SnackBox_Timeout,
                         position: SnackBox_Location,

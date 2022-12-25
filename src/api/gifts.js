@@ -146,6 +146,12 @@ router.get("/claim", limiter, async (reg, res, next) => {
 
     DB.gift.read.keysave(value.URL_Token).then((GiftKeyData) => {
       res.status(200);
+      if(GiftKeyData.rows.length === 0) {
+        res.status(403);
+        res.json({
+          Message: "No gift found, maybe it was claimed already.",
+        });
+      }
       res.json(GiftKeyData.rows[0]);
     });
   } catch (error) {
