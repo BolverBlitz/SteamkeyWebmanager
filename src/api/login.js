@@ -67,7 +67,7 @@ router.post("/login", hartlimiter, async (reg, res, next) => {
                         }
 
                         if (User_response[0].extraverify) {
-                            DB.user.update.Login2FA(User_response[0].username, new Date()).then(function () {
+                            DB.user.update.login_2fa(User_response[0].username, new Date()).then(function () {
                                 res.status(206);
                                 res.json({
                                     message: '2FA Required',
