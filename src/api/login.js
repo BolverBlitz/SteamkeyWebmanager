@@ -151,7 +151,7 @@ router.post("/login/2fa", hartlimiter, async (reg, res, next) => {
 
                         bcrypt.hash(IP, parseInt(process.env.SaltRounds, 10) / 2, function (err, ip_hash) { //Only half Saltrounds cuz of SPEEEED || Added in version 0.0.3 in a rush (Not well tested)
                             Promise.all([DB.webtoken.write.webtoken(value.username, ip_hash, UserAgent.source, WebToken, User_response[0].lang), DB.permission.read.permission(value.username)]).then(function (result) {
-                                DB.user.update.Login2FA(value.username).then(function () {
+                                DB.user.update.login_2fa(value.username).then(function () {
                                     res.status(200);
                                     res.json({
                                         token: WebToken,
