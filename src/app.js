@@ -1,6 +1,6 @@
 const express = require('express');
 const { expressCspHeader, INLINE, NONE, SELF } = require('express-csp-header');
-//const morgan = require('morgan');
+const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
 const path = require('path');
