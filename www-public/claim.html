@@ -589,7 +589,7 @@
                             fixed: true,
                             status: "success",
                         });
-                        navigator?.clipboard?.writeText(`${GiftData}`);
+                        navigator?.clipboard?.writeText(`${GiftData.key}`);
                     }else{
                         SnackBar({
                         message: `Key could not be copied to your clipboard`,
@@ -601,7 +601,7 @@
                     });
                     }
 
-                    $('#result').html(`<a style="font-style: oblique; font-size: 25px; text-decoration: none; color:yellow;" href="https://store.steampowered.com/account/registerkey?keys=${GiftData.key}" target="_blank">${GiftData.key}</a>`);
+                    $('#result').html(`<a style="font-style: oblique; font-size: 25px; text-decoration: none; color:yellow;" href="https://store.steampowered.com/account/registerkey?key=${GiftData.key}" target="_blank">${GiftData.key}</a>`);
                     $('#button_succsess').html(`<button id="BackButton" class="buttonSuccess buttonSuccess" onclick="send_keystatus('${GiftData.owner}', true, '${GiftData.id}')">Worked</button>`);
                     $('#button_fail').html(`<button id="BackButton" class="buttonFail buttonFail" onclick="send_keystatus('${GiftData.owner}', false, '${GiftData.id}')">Invalid</button>`);
                 },
